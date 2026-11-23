@@ -8,6 +8,8 @@ on:
 
 jobs:
   buildAndPublishToExchange:
+    environment:
+      name: Development
 
     runs-on: ubuntu-latest
 
