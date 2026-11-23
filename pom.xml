@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>23e266c6-fe6d-4e6c-b8d3-d42b6da1d764</groupId>
 	<artifactId>github-cicd-workflow1-mulesoft</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	
 	<packaging>mule-application</packaging>
 	<name>github-cicd-workflow1-mulesoft</name>
