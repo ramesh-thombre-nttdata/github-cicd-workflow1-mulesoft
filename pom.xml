@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>23e266c6-fe6d-4e6c-b8d3-d42b6da1d764</groupId>
 	<artifactId>github-cicd-workflow1-mulesoft</artifactId>
 	<version>1.0.0</version>
+	
 	<packaging>mule-application</packaging>
-
 	<name>github-cicd-workflow1-mulesoft</name>
 
 	<properties>
@@ -30,6 +29,26 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
+					<cloudhub2Deployment>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<provider>MC</provider>
+						<environment>${env.environment}</environment>
+						<target>${env.target}</target>
+						<muleVersion>4.9.0</muleVersion>
+						<server>connected-app-credentials</server>
+						<applicationName>${env.deployedEnv}${project.artifactId}</applicationName>
+						<replicas>${env.replicas}</replicas>
+						<vCores>${env.cores}</vCores>
+						<businessGroupId>${project.groupId}</businessGroupId>
+						<properties>
+							<env>${env.muleEnv}</env>
+						</properties>
+						<secureProperties>
+							<encryption.key>${env.encryptionKey}</encryption.key>
+							<anypoint.platform.client_id>${env.ANYPOINT_PLATFORM_CLIENT_ID}</anypoint.platform.client_id>
+							<anypoint.platform.client_secret>${env.ANYPOINT_PLATFORM_CLIENT_SECRET}</anypoint.platform.client_secret>
+						</secureProperties>
+					</cloudhub2Deployment>
 					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
