@@ -1,0 +1,30 @@
+name: Cloudhub build and deploy to Dev
+# Controls when the workflow will run
+on:
+  pull_request:
+    branches: [dev]
+    types: [closed]
+
+jobs:
+  buildAndDeploy:
+    environment:
+      name: Development
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5
+    - name: Build and Deploy with Maven
+      env:
+        CLIENT_ID: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+        ANYPOINT_PLATFORM_CLIENT_ID: ${{ secrets.DEV_ANYPOINT_PLATFORM_CLIENT_ID }}
+        ANYPOINT_PLATFORM_CLIENT_SECRET: ${{ secrets.DEV_ANYPOINT_PLATFORM_CLIENT_SECRET }}
+        encryptionKey: ${{ secrets.ENCRYPTION_NON_PROD_KEY }}
+        environment: "Development"
+        deployedEnv: "dev-"
+        muleEnv: "dev"
+        target: "Cloudhub-US-East-2"
+        replicas: "1"
+        cores: "0.1"
+      run: mvn clean -B deploy -DskipMunitTests -DmuleDeploy -s .maven/settings.xml

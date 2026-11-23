@@ -8,12 +8,14 @@ on:
 
 jobs:
   buildAndPublishToExchange:
+    environment:
+      name: Development
 
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
     - name: Build with Maven
       env:
         CLIENT_ID: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
