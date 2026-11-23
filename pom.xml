@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>23e266c6-fe6d-4e6c-b8d3-d42b6da1d764</groupId>
 	<artifactId>github-cicd-workflow1-mulesoft</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	
 	<packaging>mule-application</packaging>
 	<name>github-cicd-workflow1-mulesoft</name>
@@ -35,6 +35,7 @@
 						<environment>${env.environment}</environment>
 						<target>${env.target}</target>
 						<muleVersion>4.9.0</muleVersion>
+						<businessGroupId>${project.groupId}</businessGroupId>
 						<server>connected-app-credentials</server>
 						<applicationName>${env.deployedEnv}${project.artifactId}</applicationName>
 						<replicas>${env.replicas}</replicas>
