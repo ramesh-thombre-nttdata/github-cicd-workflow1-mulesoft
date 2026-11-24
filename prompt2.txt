@@ -1,0 +1,445 @@
+7.1 Getting our strategy from our AI tools
+Before we approach these tools, we should think carefully about our prompt. If we say “generate a frontend for my application” without enough information, the guidance will be too vague. There is a time and a place for brief prompts. In my experience, brief prompts are great for focused and specific advice, for problems such as “How do I query this table?” or “How do I debug this error message?” Detailed prompts are great for more abstract results, such as “How do I design this frontend?” or “What’s a good approach for marshalling data?”
+
+This will be the largest prompt we’ve used so far. I’ve given it a lot of thought and trial and error to come up with it. Here is how I want to structure it:
+
+Role—Role-based prompting is something we’ve done before here, and we want to establish that we want the model to act as a professional Python developer who specializes in Flask. Lately, I’ve found that establishing a role isn’t as important as it used to be. ChatGPT for instance can infer what you want without it, and it’s nearly the same. But just to make sure, we’ll drop it in there.
+
+Objective—We want to clearly establish our objective. The clearer and more concrete we are, the better the results. We must describe exactly what we want here.
+
+Details—Here we can add some details that will be helpful. These are small but significant toward getting the right result.
+
+Data—I want to describe the data we’re working with and what it means. This helps with code generation. If we get code specific to the data, we might not use it, but it will be helpful to give this direction.
+
+Functionality requirements—What do we want this to do? This is a good way to add detail to our objective.
+
+Code production—Here we are specific about what we want to generate. In my experience, this only helps marginally, but it’s worth the effort to clarify it.
+
+Here is the initial prompt that I’ve created and will send to our chat interfaces:
+
+ Act as a professional Python Developer specializing in Flask. Create a solution based on this information.
+
+Objective: Develop a front end for a database-driven Flask application for a quiz system. The application will display questions and possible answers to the user, capture their selected answer, store the answer in a database, and then show the next question. Flask has been installed, and the backend is already functional.
+
+Details:
+
+Framework: Flask, with Flask templates for the frontend. The application is already created.
+
+Database: A SQLite Database that provides 35 questions with possible user responses. This database exists.
+
+Frontend: A simple and intuitive interface for users to interact with the quiz. This needs to be created.
+
+Data:
+
+This is an example of a question:
+
+(‘T1A03’, 3, ‘What are the FCC rules regarding the use of a phonetic alphabet for station identification in the Amateur Radio Service?’, ‘It is required when transmitting emergency messages’, ‘It is prohibited’, ‘It is required when in contact with foreign stations’, ‘It is encouraged’)
+
+Field 0 is the Question ID.
+
+Field 1 is the id of the correct answer.
+
+Field 2 is the question to be displayed.
+
+Field 3 is a possible answer.
+
+Field 4 is a possible answer.
+
+Field 5 is a possible answer.
+
+Field 6 is a possible answer.
+
+Functionality Requirements:
+
+Iterate through the questions stored in the database.
+
+For each question, display it along with possible answers using Flask templates.
+
+Capture the user’s selected answer and store it in the database.
+
+After storing the answer, proceed to the next question until the quiz is complete.
+
+Development Strategy:
+
+Question Management: Implement functionality to add, retrieve, and iterate through questions and their possible answers.
+
+Quiz Interface: Use Flask templates to create the quiz interface. The interface should display one question at a time with options for the user to select an answer.
+
+Answer Handling: Develop a mechanism to capture the user’s selected answer, validate it, store it in the database, and then retrieve the next question.
+
+Navigation: Ensure seamless navigation between questions and provide feedback to the user upon completion of the quiz.
+
+Code Production:
+
+Develop routing and template creation for displaying questions and capturing answers.
+
+Implement logic for iterating through questions and storing responses.
+
+Ensure to include error handling and validation for robustness.
+
+Expected Outcome: A fully functional Flask-based quiz application that efficiently manages and displays quiz questions, captures user responses, and navigates through the quiz seamlessly.
+
+I will send this prompt to ChatGPT, Gemini, and Blackbox AI. Let’s evaluate the results. We’ll start with ChatGPT.
+
+CRAFTING EFFECTIVE UI PROMPTS
+When requesting UI guidance from AI tools,
+
+Clearly state the purpose of your application and its intended users.
+
+Identify any technological constraints, such as frameworks or libraries, that may affect the design.
+
+Describe the data structures that will be used to populate the interface.
+
+Specify the exact functionality you need to achieve.
+
+Share your visual preferences, including colors and layout styles.
+
+Request the specific deliverables you need, such as wireframes, HTML/CSS, or flowcharts.
+
+For design work, it’s best to provide longer and clearer prompts to get better results.
+
+Treat your prompt like a design brief—more context means a more tailored response.
+
+7.1.1 ChatGPT Results
+We’ve crafted a detailed prompt that’s specific to our needs. Here is the output from ChatGPT. Let’s review it and see whether it’s useful.
+
+image Given your objective and details, let’s outline a solution for developing the frontend of your Flask application for a quiz system. The solution will cover the backend and frontend components necessary to meet your requirements.
+
+Backend Setup
+Database Model: Assuming you have a model for the questions, it should look something like this in Flask with SQLAlchemy:
+
+from flask_sqlalchemy import SQLAlchemy
+db = SQLAlchemy()
+class Question(db.Model):
+    id = db.Column(db.String, primary_key=True)  # Question ID
+    correct_answer_id = db.Column(db.Integer)  # Correct answer ID
+    question_text = db.Column(db.String)  # Question text
+    option1 = db.Column(db.String)  # Option 1
+    option2 = db.Column(db.String)  # Option 2
+    option3 = db.Column(db.String)  # Option 3
+    option4 = db.Column(db.String)  # Option 4
+Fetching Questions: Implement a function to fetch questions one at a time from the database.
+
+def get_next_question(current_question_id=None):
+    if current_question_id is None:
+        return Question.query.first()
+    else:
+        current_question = Question.query.filter_by
+(id=current_question_id).first()
+        return Question.query.filter(Question.id > 
+current_question.id).first()
+Storing Answers: You’ll need a model to store user answers and a function to handle the storage:
+
+class UserAnswer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.String, db.ForeignKey('question.id'))
+    selected_answer_id = db.Column(db.Integer)
+    # Add user reference if needed
+def store_user_answer(question_id, selected_answer_id):
+    answer = UserAnswer(question_id=question_id, 
+selected_answer_id=selected_answer_id)
+    db.session.add(answer)
+    db.session.commit()
+Frontend Setup
+Quiz Interface: Use Flask’s Jinja templates to create the quiz interface. Here’s a simple template for displaying questions:
+
+<!-- templates/question.html -->
+<html>
+<head>
+    <title>Quiz Question</title>
+</head>
+<body>
+    <form action="/answer" method="post">
+        <h2>{{ question.question_text }}</h2>
+        {% for option in question.options %}
+        <input type="radio" name="answer" 
+>{{ option }}<br>
+        {% endfor %}
+        <input type="submit" >
+    </form>
+</body>
+</html>
+Routing and Logic: Implement Flask routes to handle displaying questions and capturing answers.
+
+from flask import Flask, request, render_template, redirect, url_for
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///yourdatabase.db'
+db.init_app(app)
+@app.route("/")
+def index():
+    question = get_next_question()
+    return render_template("question.html", question=question)
+@app.route("/answer", methods=["POST"])
+def answer():
+    selected_answer_id = request.form['answer']
+    question_id = request.form['question_id']
+    store_user_answer(question_id, selected_answer_id)
+    next_question = get_next_question(question_id)
+    if next_question is None:
+        return "Quiz Complete! Thank you for participating."
+    else:
+        return redirect(url_for('index', question_id=next_question.id))
+Final Steps
+Make sure to initialize your database with flask db init, flask db migrate, and flask db upgrade commands if you are using Flask-Migrate.
+
+Test your application thoroughly to ensure that questions are fetched correctly, answers are stored, and the user can navigate through the quiz without issues.
+
+Implement error handling and validation to manage cases where the user might submit an answer without selecting an option or if there’s an issue fetching questions from the database.
+
+This setup should give you a robust starting point for your Flask-based quiz application. Adjustments may be needed based on your specific requirements or if you decide to add more features like user authentication, score tracking, or feedback mechanisms.
+
+This is useful information, and it’s laid out in a useful way. Here are a few things I like about the results from ChatGPT. It walks us through a sequence of events, as outlined in figure 7.1.
+
+Figure 7.1: How ChatGPT suggested building the frontend. Each piece represents a function that must be created.
+A screenshot of a computer screen Description automatically generated
+ChatGPT prescribes methods to develop this application, many of which we’ve already talked about. It suggests ways to set up the backend and use SQLAlchemy, which I intentionally avoided in this project. For example, in section 1 of backend design, there is
+
+image Database Model: Assuming you have a model for the questions, it should look something like this in Flask with SQLAlchemy:
+
+It’s good advice, but we won’t use it. It’s not that SQLAlchemy is bad, but it’s overkill for what we’re trying to do. I skipped through the sections describing how to assemble the backend.
+
+The frontend setup, however, is useful. It prescribes the following steps:
+
+Create a Jinja template in HTML.
+
+Implement routing.
+
+Implement redirects.
+
+I’ll ignore most of what ChatGPT has suggested except for the frontend setup. Even though I specified in the prompt that the backend was complete, much of the result was focused on backend and architecture, which I don’t need at this point. Let’s see what the other tools have to say about it.
+
+7.1.2 Gemini Results
+Here is the output from Gemini, exactly as it was returned:
+
+image Flask Quiz Application Frontend
+
+This solution utilizes Flask templates to render the quiz interface and interact with the existing backend for storing user responses.
+
+Dependencies:
+
+Install Flask-WTF for form handling:
+
+pip install Flask-WTF
+Templates:
+
+Create a folder named templates in your project directory. Within this folder, create a file named quiz.html.
+
+quiz.html:
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz App</title>
+</head>
+<body>
+  <h1>{{ question.question }}</h1>
+  <form action="/answer" method="POST">
+    {% for answer in question.answers %}
+      <input type="radio" name="answer" > {{ answer.answer }}<br>
+    {% endfor %}
+    <br>
+    <button type="submit">Submit Answer</button>
+  </form>
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+</body>
+</html>
+Routes and Logic:
+Import necessary libraries.
+
+Define routes for displaying the quiz and handling answers.
+
+In the quiz route, retrieve the next question from the database (implement logic based on your backend).
+
+Pass the question and answers to the quiz.html template.
+
+In the answer route, validate the user’s selected answer from the submitted form.
+
+Store the answer in the database (use your existing backend functions).
+
+Retrieve the next question or display a completion message.
+
+app.py:
+
+from flask import Flask, render_template, request, redirect
+from flask_wtf import FlaskForm
+from wtforms import RadioField, SubmitField
+from wtforms.validators import DataRequired
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key'
+class AnswerForm(FlaskForm):
+  answer = RadioField('Answer', validators=[DataRequired()])
+  submit = SubmitField('Submit')
+@app.route('/')
+def quiz():
+  # Retrieve the next question from the database
+  question = # your database logic...
+  if not question:
+    return render_template('quiz.html', message="Quiz completed!")
+  form = AnswerForm()
+  return render_template('quiz.html', question=question, form=form)
+@app.route('/answer', methods=['POST'])
+def answer():
+  form = AnswerForm()
+  if form.validate_on_submit():
+    selected_answer = form.answer.data
+    # Store answer in the database
+    # your database logic...
+    return redirect('/')
+  return render_template('quiz.html', question=question, form=form)
+if __name__ == '__main__':
+  app.run(debug=True)
+Explanation:
+The AnswerForm class defines a radio button field for selecting an answer and a submit button.
+
+The quiz route retrieves the next question and renders the quiz.html template, passing the question details and the form object.
+
+The answer route validates the submitted form and stores the chosen answer using your existing backend logic.
+
+Error handling is implemented using DataRequired validator for the radio button field.
+
+Running the application:
+
+Save the files and run the application:
+
+python app.py
+
+This code provides a basic example. You might need to modify it based on your specific backend implementation and desired features like displaying user’s score or providing feedback. Remember to replace # your database logic. . . with your actual functions for retrieving questions and storing answers.
+
+The Gemini results start off with suggesting we install Flask-WTF to handle the quiz and store responses. It doesn’t give any guidance on building the backend, which is good because we’ve already built it.
+
+What is Flask-WTF? It’s an extension that integrates the WTForms library and handles forms in a simple way for a Flask application. It’s certainly something worth considering for our project. Here are the steps Gemini gives us to solve our problem:
+
+Install dependencies (Flask-WTF).
+
+Create a template.
+
+Create routes and logic.
+
+It does also give a good explanation of the code, and what’s happening, which is useful. We should consider this solution as we implement the interface for the application. Let’s see what our third option, Blackbox AI, suggests for this problem.
+
+7.1.3 Blackbox AI results
+Here is the output from Blackbox AI, exactly as it was returned:
+
+image Here is a possible implementation of the quiz application:
+
+First, let’s create the necessary routes and templates.
+
+app.py:
+
+from flask import Flask, render_template, request, redirect, url_for
+from quiz_db import get_questions, store_answer
+app = Flask(__name__)
+@app.route('/')
+def index():
+    return redirect(url_for('quiz'))
+@app.route('/quiz', methods=['GET', 'POST'])
+def quiz():
+    question_id = request.args.get('question_id', 1)
+    question = get_questions(question_id)
+    if request.method == 'POST':
+        selected_answer = request.form['answer']
+        store_answer(question_id, selected_answer)
+        if question_id < 35:
+            return redirect(url_for('quiz', question_id=question_id + 1))
+        else:
+            return redirect(url_for('results'))
+    return render_template('quiz.html', question=question)
+@app.route('/results')
+def results():
+    return render_template('results.html')
+if __name__ == '__main__':
+    app.run(debug=True)
+quiz_db.py:
+
+import sqlite3
+def get_questions(question_id):
+    conn = sqlite3.connect('quiz.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM questions WHERE id=?', (question_id,))
+    question = cursor.fetchone()
+    conn.close()
+    return question
+def store_answer(question_id, selected_answer):
+    conn = sqlite3.connect('quiz.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO answers 
+(question_id, selected_answer) 
+VALUES (?, ?)', (question_id, selected_answer))
+    conn.commit()
+    conn.close()
+templates/quiz.html:
+
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{{ question[2] }}</h1>
+    <form method="post">
+        <input type="radio" name="answer" 
+>{{ question[3] }}</input><br>
+        <input type="radio" name="answer" 
+>{{ question[4] }}</input><br>
+        <input type="radio" name="answer" 
+>{{ question[5] }}</input><br>
+        <input type="radio" name="answer" 
+>{{ question[6] }}</input><br>
+        <input type="submit" >
+    </form>
+{% endblock %}
+templates/results.html:
+
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Quiz Results</h1>
+    <p>Congratulations! You have completed the quiz.</p>
+{% endblock %}
+templates/base.html:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Application</title>
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>
+This implementation uses Flask’s routing system to handle different parts of the quiz. The quiz route displays the current question and possible answers using a Flask template. The results route displays the quiz results. The store_answer function stores the user’s selected answer in the database. The get_questions function retrieves the current question from the database. The quiz iterates through the questions using the question_id parameter in the URL. The user’s selected answer is captured using a form and stored in the database using the store_answer function. After storing the answer, the quiz proceeds to the next question. The quiz ends when all questions have been answered, and the user is redirected to the results page.
+
+Out of all the results, the Blackbox one is my favorite. It doesn’t bother with any of the database or setup and jumps directly to generating code for the frontend pieces of the application. There are some modifications we can make to the prompt if we aren’t seeing the results geared toward the frontend design. But Blackbox created exactly what we’re looking for. It suggested the following steps:
+
+Create routes.
+
+Create a database connection and query it.
+
+Create templates.
+
+I’ll use a combination of all the advice from each tool but start with the Blackbox results. I’ll likely end up pulling some suggestions from each.
+
+REFINEMENT
+There are some steps we could take with each of these tools if we want to drill down and get more detail about UI information. For example, in the objective section, we used
+
+ Objective: Develop a front end for a database-driven Flask application for a quiz system. The application will display questions and possible answers to the user, capture their selected answer, store the answer in a database, and then show the next question. Flask has been installed and the backend is already functional.
+
+We could add further refinement and be more specific:
+
+ Objective: Develop a visually appealing and user-friendly front-end interface for a database-­driven Flask application for a quiz system. The interface should display questions and possible answers to the user in a clear and intuitive manner, capture their selected answer, store the answer in a database, and then show the next question. The design should prioritize simplicity, a light color scheme, and mobile compatibility to ensure a seamless user experience. Flask has been installed, and the backend is already functional.
+
+This small change can drastically alter the output. It’s acceptable to start out with abstract requirements, but if you aren’t getting what you want, refine your prompt.
+
+TIPS FOR PROMPT REFINEMENT
+Use specific examples. Instead of vague ideas, be precise.
+
+Quantify whenever possible. Use numbers, measurements, or statistics.
+
+Choose active verbs. Weak and passive verbs obscure your intent.
+
+Remove unnecessary modifiers. Don’t send words (or “tokens” in LLM speak) that don’t add value to the request.
+
+Be direct. Avoid hedging or qualifiers
+
+We won’t spend more time refining our prompt for each tool. There are some great results we can work with, so let’s put those into action.
+
+====================
