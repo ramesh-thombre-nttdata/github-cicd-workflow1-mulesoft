@@ -1,0 +1,4850 @@
+[
+  {
+    "IMS_Record_ID__c": "US-RECEIPT-867/2083",
+    "Name": "TC2/2083",
+    "Location_GRN__c": "131Rd0000002io9IAA",
+    "GRN_Date__c": {
+      "fieldValue": "2024-12-18",
+      "fieldType": "Date",
+      "fieldFormat": "yyyy-MM-dd"
+    },
+    "Packing_Slip__c": "",
+    "Unique_GRN_Vendor_ID__c": "3002902",
+    "flag__c": "US",
+    "rec_period__c": "202409",
+    "rec_time__c": "10:37:45.4120000",
+    "rec_line__c": "18",
+    "rec_qty__c": "3100.000",
+    "rec_doctype__c": "0",
+    "rec_product__c": "741278",
+    "rec_stockcode__c": "0008-2060",
+    "rec_catalogue__c": "CP07",
+    "rec_purline__c": "1",
+    "rec_modifier__c": "KW071",
+    "rec_modified__c": "2024-12-18 10:37:45.4128980",
+    "rec_creator__c": "KW071",
+    "rec_comments__c": "",
+    "rec_debited__c": "0.000",
+    "rec_surchargeper__c": "",
+    "rec_state__c": "open",
+    "rec_status__c": "170",
+    "rec_advicemedia__c": "",
+    "rec_media__c": "",
+    "Supplier__c": "001VG00000IXWy2YAH",
+    "Supplier_Purchase_Order__c": "a2qVG000001aB7dYAE"
+  },
+  {
+    "IMS_Record_ID__c": "US-RECEIPT-867/2083",
+    "Name": "TC2/2083",
+    "Location_GRN__c": "131Rd0000002io9IAA",
+    "GRN_Date__c": {
+      "fieldValue": "2024-12-18",
+      "fieldType": "Date",
+      "fieldFormat": "yyyy-MM-dd"
+    },
+    "Packing_Slip__c": "",
+    "Unique_GRN_Vendor_ID__c": "3002902",
+    "flag__c": "US",
+    "rec_period__c": "202409",
+    "rec_time__c": "10:38:03.0110000",
+    "rec_line__c": "19",
+    "rec_qty__c": "240.000",
+    "rec_doctype__c": "0",
+    "rec_product__c": "1190882",
+    "rec_stockcode__c": "0320-9799",
+    "rec_catalogue__c": "CPS3",
+    "rec_purline__c": "71",
+    "rec_modifier__c": "KW071",
+    "rec_modified__c": "2024-12-18 10:38:03.0118990",
+    "rec_creator__c": "KW071",
+    "rec_comments__c": "",
+    "rec_debited__c": "0.000",
+    "rec_surchargeper__c": "",
+    "rec_state__c": "open",
+    "rec_status__c": "170",
+    "rec_advicemedia__c": "",
+    "rec_media__c": "",
+    "Supplier__c": "001VG00000IXWy2YAH",
+    "Supplier_Purchase_Order__c": "a2qVG000001aB7dYAE"
+  }
+]
+// In the above payload if any IMS_Record_ID__c matches with each other than we have to check rec_modified__c field which is latest . that object we need to return as output
+Solution:
+((payload groupBy ((item, index) -> item.IMS_Record_ID__c)) pluck ((value, key, index) -> (value orderBy ((orderbyvalue, orderbykey) -> orderbyvalue.rec_modified__c ))[-1 to 0]))[0]
+
+
+
+===============
+i am receiving a csv file where i am getting a datetime now i want to put the exact date time but it is going 5 hours back when i am inserting it in salesforce : my logic
+
+(Appt_CancelDate__c  :  (payload.Appt_CancelDate[0] as LocalDateTime {
+		format: "M/d/yyyy H:mm"
+	}  as String {
+		format: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+	} as DateTime >> 'UTC') as DateTime default null)  if (payload.Appt_CancelDate[0] !="" and payload.Appt_CancelDate[0] != null)
+
+I tried changing this to EST also , as my client instance is in EST but still it didn't work
+7 repliesAkashdeep K  [4:01 PM]
+Use ++ America/New_York. Don’t use >>
+[4:04 PM]@Vatsal Rahul 
+Vatsal Rahul  [7:38 PM]
+thanks @Akashdeep K
+Akashdeep K  [11:30 PM]
+Did it work
+Vatsal Rahul  [9:13 AM]
+actually i added + |PT5H| in my logic as of now and that works for the usecase
+Akashdeep K  [11:43 AM]
+This will not work when day light savings starts. You can give the dates in April n check
+Vatsal Rahul  [11:55 AM]
+thanks @Akashdeep K the above ++ America/New_York works
+
+===============
+I am using Create Job Bulk API V2 to Update records in salesforce.
+Input is JSON format, Bulk API V2 expects CSV Input, so conversion is required.
+Due to some rulesets in Salesforce, it is expecting even null Input values to be in a certain format.
+
+How do I deal with null characters from input to not affect the rulesets in Salesforce?? (edited) 
+2 repliesSrinivas Adari  [6:16 PM]
+Example Input:
+[
+  {
+    "Id": "Id1",
+    "Tax_ID__c": "123456789",
+    "PersonHomePhone": null,
+    "PersonMobilePhone": null,
+    "Phone": "4175881289",
+    "PersonOtherPhone": null,
+    "Work_Phone__c": null
+  }
+]Kailash Malani  [6:33 PM]
+@Srinivas Adari pass in this format :
+
+[
+  {
+    "Id": "Id1",
+    "Tax_ID__c": "123456789",
+    "PersonHomePhone": '#N/A',
+    "PersonMobilePhone": '#N/A',
+    "Phone": "4175881289",
+    "PersonOtherPhone": '#N/A',
+    "Work_Phone__c": '#N/A'
+  }
+]
+
+===============
+Getting the error Cannot coerce String (2025-01-23) to Date while converting String to Date in the format MM/dd/yyyy . Any suggestions ? TIA
+Input:
+[{
+"Actual_Shipment_Date__c": "2025-01-23"}]
+DW:
+payload map ((item) -> {
+    "Actual Shipment Date": if ( item.Actual_Shipment_Date__c != null ) item.Actual_Shipment_Date__c as Date {format: "MM/dd/yyyy"} as String {format: "MM-dd-yyyy"} else null,
+}) default []
+Output:
+[
+  {
+    "Actual Shipment Date": "01/23/2025"
+  }
+]3 repliesAbhishek Saseendran  [8:25 PM]
+payload map ((item) -> {
+    "Actual Shipment Date": if(item.Actual_Shipment_Date__c != null) 
+                                item.Actual_Shipment_Date__c as Date {format: "yyyy-MM-dd"} as String {format: "MM/dd/yyyy"}
+                            else null,
+}) default []
+
+
+=============
+scatter-gather
+for example, in insurance doamin, to Check insurance eligibility of a patient:
+- in one route of scatter-gather, we can call get patient details api and call insurance claims details in another route and then aggregate the result 
+
+Observability: why this app didn;t respond in less than 5 sec?
+Monitoring: Latency, LLM not responding
+Evaluation: evaluate output before giving it to end user or application.
+
+headscratch issue.
+login issue coming to apps I was supporting. error not coming in logs. nothing was coming up. the app just did not load,
+browser app -> not repsonding keep on rotating the bar and not responding.
+
+issue global -> was working on other server but not working in prod.
+we coudln;t find the solution
+users started to gettting restless.
+after doing a checking, email sending. we found out, cycber security rule firewall rule,
+for some reason they forgot to notifiy.
+il. they blocked app from loading. 
+36 hours of brainstorming. 
+===================
+server down answer in US. team is in US. situation becomes more challenging when you are not able to find the solution.
+
+Gurgaon -> power outage.
+
+power outage normal in india -> I got a call from my collegue and told me to complete the task of modifying the code. 
+- I updated the client, due to power outage not able to complete this task. clients thought storm aa gaya. why there is a power outage.
+- ====================
+Input: Analyze project status updates, meeting notes, and other relevant project documents.
+Risk identification: Identify potential risks based on keywords, delays, resource constraints, or any deviations from the project plan.
+Risk assessment: Assess the likelihood and impact of each identified risk.
+Mitigation planning: Suggest mitigation strategies to reduce the likelihood and/or impact of each risk.
+Output: Present a risk report that includes a description of each risk, its assessment, and proposed mitigation plans.
+==============
+git branch -m cicd-testing feature/cicd-testing
+git push origin -u feature/cicd-testing
+============
+Need help in DW
+input:
+[{ "BirthDate": "12/14"}]
+output:
+[{"BirthDate": "1994-12-14"}]
+1994 is hardcoded
+Thanks in advance2 repliesUpendra Thunuguntla  [5:59 PM]
+%dw 2.0
+output application/json
+var inp = [{ "BirthDate": "12/14"}]
+var yr = "1997"
+
+---
+inp map ((item, index) -> {
+    "BirthDate" : (item.BirthDate ++ "/$(yr)") as Date {format:"MM/dd/yyyy"} as String {format:"yyyy-MM-dd"}
+})Atharva Gondhalekar  [6:00 PM]
+%dw 2.0
+output application/json
+---
+payload map {
+    BirthDate: "1994-" ++ (($.BirthDate splitBy  "/") joinBy  "-")
+}
+============
+clearly identifying high impact, high risk
+Q3: by focusing on high impact and high risk tasks 
+for example, sending a client email has high impact. you cannot risk
+
+Capture, Process, Organize, Review and engage
+separate the tasks by project(work), time(birthday), context
+
+
+Productivity:
+1. Capture:
+- is this actionable?
+- 2 min -> if a tasks takes less than 2 mins -> do it right away.
+
+- your mind is for having ideas, not holding them.
+2. clarify
+what is the next step?
+- do it, deletegate or defer it
+- 
+3. Organize
+4. Reflect
+5. Egnage
+
+get it out of your head and put it in that trusted palce.
+gola is to not to leave anything pending for tomorrow.
+my next day start the day before.
+
+powerful communications are:
+1. Honest
+2. Respectful
+3. Engaging
+4. Result Oriented
+
+Conflict:
+- knowing how to argue effectively and respectfully at work is key to resolve conflict.
+
+
+drive actions: helps address the issues headon this foster the culture of open communication and collaboration.
+
+Rhetorical Triangle:
+1. Ethos - The Speaker (Credibility): the way in which the speaker affects the argument.
+- to other believe you are a an expoert on the topic
+- good character and intentions.
+- you change othes opinions and beliefs
+- audience will figure out your credibility
+ - your motives
+ - belifs and values
+ - assumptions
+ 
+Why imprtant?
+- establish credibility
+- build trust audience
+
+How to establish ethos?
+- emphasizing the personal experience or expertise
+- quating reputable sources
+- using data and statistcs to support the arguments
+- Demonstrating a commitment to honesty and integrity
+
+2. Pathos - The Audience(Emotions):
+- understand your audience and appeal to their emotions
+- use stories, images, and words to create emotional connection
+- audience expection
+- think about the emotion you want to invoke
+
+ways to invoke emotions:
+- use imagery or storytelling
+- use humour or irony
+- taking a personal or human interest approach
+
+3. Logos - The Message(Logic):
+- act of persuading others by using facts, numbers & logic to make your point
+
+- use nalogies or metaphors to simplify complex ideas
+to apply this to communication design: you need to analyze 
+- purpose -> audience -> context
+purpose is goal or outcome you want to achieve
+audience -> is a group or individual you want to reach with your msg
+context -> is situation or environment that influences your message.
+
+shift required:
+I know and understand? -> help me understand
+I know the truth -> we all have diff storines and interpretation
+whats wrong with you - what's going on for you? whats your epxeience?
+question to understand perspective
+
+Components
+1. Active listening:
+pay full att
+ask questions
+reflection
+understand perspective
+
+this:
+- builds trust
+- strong relationships
+
+2. Empathy:
+- its about imagining someone else's situation and understand their perspective
+- respond in a compassionate and supportive
+
+3. Emotional Intelligence:
+- ability to recognize, undestand and manage our own emotions and emotions of others.
+- you can better naviate conflicts
+- build trust 
+- and create positive atmoshhere in our interactions
+
+Interpersonal relationships and building powerful conversations:
+- hormoniuos & supportive environment
+1. Buidling rapport: is basically emotional connection with other people
+- rapport is connection or relationship with someone else
+
+- prociess of developing a connection
+
+- finding common ground and being empathic
+- hit it off or get on well
+2. Breaking the Ice:
+- raport is about finding the similarities and being on the same weavelength as somebody else
+- initiate small talk
+
+Mirroring:
+- process of copying the others person physiology to build rapport and establish trust
+- try matching small things they do voice, speech, tone , breathing, energy
+- 7% words, 55% facial and 38 vocal
+
+Anchoring:
+- associating an emotion that you are currently feeling like happiness, piece, confidence.
+- can create dresired emotional state 
+
+useful:
+- in situaion where you want to elicit confidence, relaxation, motivation
+- you can enahnce your ability to influences others positively whether you're pitching an idea or negotiating deal.
+-  
+
+Pacing & leading: align with them
+- a way of creating rapport and trust by showing you understand 
+their:
+ - perspective, feelings and actions
+- pacing means matching and mirroing their verbal and non-verbal cues which is their tone of voices, words, body language and beliefs
+- gently suggesting new ideas, suggestions and directions such as change of decision, opinion or solution
+
+
+Model is an mathematcial system that learns patterns from the data and makes predictions.
+
+20+ adventure
+long journey of scaling platforms.
+gratification I get is from. hopefully thats a good fun fact.
+- fun fact: I always share facts in meetings.
+- fun fact: 
+=======
+1. AI/ML Engineer
+Design and deploy machine learning and generative AI solutions using Python, LangChain, RAG, vector databases, and OpenAI APIs.
+
+2. Generative AI Developer
+Build LLM-powered applications using Python, prompt engineering, RAG pipelines, embeddings, LangChain, and vector databases.
+
+3. Data Scientist
+Analyze large datasets and develop predictive machine learning models using Python, pandas, scikit-learn, SQL, and statistical techniques.
+
+4. MuleSoft Integration Developer
+Design and develop MuleSoft APIs and integrations using Mule 4, DataWeave, Anypoint Platform, REST APIs, and API-led connectivity.
+
+5. MuleSoft Solution Architect
+Architect enterprise integration solutions using MuleSoft, API-led connectivity, REST APIs, Anypoint Platform, security, and cloud integration patterns.
+
+6. Backend Python Developer
+Develop scalable backend services and REST APIs using Python, FastAPI, SQL databases, Docker, and cloud platforms.
+
+7. RAG Engineer
+Develop retrieval-augmented generation systems using Python, LLMs, embeddings, vector databases, document chunking, and semantic search.
+
+8. DevOps Engineer
+Build CI/CD pipelines and automate cloud deployments using GitHub Actions, Docker, Kubernetes, AWS, Terraform, and monitoring tools.
+
+9. AI Solutions Architect
+Design enterprise AI and agentic AI solutions using LLMs, RAG, APIs, cloud platforms, security, governance, and integration architecture.
+
+10. Full Stack Developer
+Build web applications using React, JavaScript, Python, REST APIs, SQL databases, Git, Docker, and cloud deployment.
+
+==========
+self-aware:
+resilience
+leadership
+proactive
+
+Anypoint Code Builder (ACB):
+1. enable Einstein set up toggle in salesforce
+2. enable agentforce agents in salesforce
+3. complete connection in Salesforce, Anypoint Platform Setup -> click complete connection
+4. Ensure you provide permissions to user in Anypoint Platform to user under Users
+- ACB 
+- Dev agent 
+
+NTT-Data-24Aug
+
+NTT-Data-23Sept
+
+17:00
+
+pip config set global.cert "C:\Temp\ZscalerRootCertificate-2048-SHA256.crt"
+=================
+ACB:
+- 
+How the prompt looks like and what is the expected output of the prompt?
+- sfdc crud operations. do operations liek fetch records, delete, update, or upsert records.
+- getting the data right and structure righ would help you to eliminiate the future errors.
+- api does not hallucinate or system does not hallucinate, assuming it know what work should be done.
+- let's engineer the prompt with Salesforce use case of implemeting API for CRUD operations using basic auth.
+
+our prompt divided into 4 categories:
+Context: 
+- would be business logic that API supposed to be work on
+Interface:
+- are the endpoints expected. req and res expected out of this api
+Interaction:
+- How does the api would be interacting with outside world. it is an exp api? is it an system? if it is system api, what all connections it has to do with other systems?
+Rules:
+NFRs
+- C4E rules that NTT follows that api should have, we can mention those rules, NFRs and other, we can club them into a prompt and we can have better output compare to natural prompt we provide.
+Context:
+- Create a system API which connects with salesforce
+- does CRUD operations
+
+Interface:
+what will be the endpoints
+- /read /write, /update, /delete
+- interafce is nothing but RAML
+- you can provide request and response data
+
+Interaction:
+- Account object in SFDC
+- How do I interact with the api
+- use basic auth for all endpoints
+
+Rules:
+- if the api is connecting the outside call it sapi and kabab casing
+- in logging, mask sensistive information such as credit card details.
+
+so we have 
+is this info suficent? would it create what we want?
+or would it hallucinate at some point?
+
+- in the context, we define what all we expected.
+- in interface, for each endpoint, what is header requirement?, what is the reqesut and response requirement that should come at the end?
+
+- dev agent asks for few approvals for designing and implementing actually.
+- you can see operations going on in your editor side by like generating office.
+ - do not click a alot in vs, it gets confused.
+
+- what happens in the background, based the prompt, it creates tasks here.
+- like project structure, dependencies, about actual implementation and what suppose to be done there.
+
+vs code errors: 
+- errors: unexpected api response and LLM did not provide any assistenat msgs. 
+- it is possible -> api request error network error, system dropped.
+- if the prompt did not work as expected, then ask the model to fix the issue.
+
+you can talk to mulesoft vibe about platform.
+like how many flow I cosnumed, what is my subscription, how many mq I have.
+- can create private space from dev agent.
+- 
+to check what is request going on, you can go to output -> muleosft dev agent.
+- for packaging or compiling errir, select mule dx server.
+-
+if dev agent has done something wrong and went completely in different direction, you have option to restore the previous step.
+
+- if we face any issues, we can ask mulesoft vibes to fix that issue.
+- we can copy that and paste in the vibes for the current project.
+
+===========
+1. PKIX path building error: certificate related issue
+2. build error with maven version. your maven version 3.2.1 and we 
+require 3.3.3. where it is located?
+-
+==============
+Daily tasks that could be automated:
+1. documentation generation prompt
+2. Email draft/summarize prompt 
+3. Coding, debugging and testing with AI tools
+========
+import streamlit as st
+
+# checkpoint 1: Create a title and write some markdown
+st.title("This is a title")
+st.markdown("This is *valid* **markdown**")
+
+#checkpoint 2: Add a sidebar
+st.sidebar.title("A sidebar is a great place to insert configs")
+st.sidebar.markdown("You can add widgets here to configure your app")
+
+# checkpoint 3: Create a text area widget
+user_question = st.text_area("Ask a question", key="user_question")
+st.write(f"User question: {user_question}")
+
+# checkpoint 4: Create columns
+col1, col2 = st.columns(2)
+
+n_results = col1.number_input("Number of results", min_value=1,
+max_value=10, value=1)
+col1.write(f"Number of results: {n_results}")
+
+model_choice = col2.selectbox("Choose a model", ["gpt-3", "gpt-4"])
+col2.write(f"Selected model: {model_choice}")
+
+# checkpoint 5
+if st.button("Get Answers"):
+     st.write(f"Model: {model_choice}")
+     st.write(f"Question: {user_question}")
+     st.write(f"Number of Results: {n_results}")
+     st.write("RAG output goes here...")
+	 
+	 =====================
+	 RAG APP
+	 Build a RAG App
+Prompt Engineering in Streamlit
+Now that we’ve covered the basics of RAG and Streamlit, we are ready to put it all together in our final application! Streamlit’s interactivity allows us to easily integrate the functions we have created using Chroma database searches and retrieve results using the OpenAI API. Ultimately, we will have our very own smart textbook and Q&A web app!
+
+In this exercise, we will integrate the RAG search to complete the application’s final functionality. Let’s start by reviewing some helper functions from the prompt engineering exercise.
+
+Initializing OpenAI client
+First, we will initialize the OpenAI client and define a function get_completion that sends a system prompt and user prompt to the OpenAI API to generate a completion using the specified model. The system prompt specifies the LLM’s role while answering the user prompt. Since we would essentially like it to be an assistant that retrieves information from a textbook, we will set the system prompt to be something like the following statement:
+
+You're a helpful assistant who looks up answers for a user in a textbook and returns the answer to the user's question. If the answer is not in the textbook, you say, 'I'm sorry, I don't have access to that information.'
+
+Copy to Clipboard
+
+The textbook mentioned in the above prompt is nothing but the documents we uploaded to Chromadb a couple of exercises ago!
+
+Set up Streamlit Search App with Chromadb:
+Next, we will pick up the Streamlit app where we left off in the previous exercise. We’ve pretty much reproduced all the code we had in our last exercise, but we will modify the final for loop we used. We’re going to include the metadata of the documents as part of the search results so that the Chroma query results are searchable by keyword.
+
+Perform RAG search with OpenAI:
+Finally, we will use OpenAI to answer the user prompt based on the search results. This consists of using a prompt that contains the RAG instructions, the user question, and the search results. Combining these into a single string will help us create a prompt to pass to the get_completion() function, which calls the OpenAI API.
+
+Instructions
+Checkpoint 1 Passed
+1.
+Initializing OpenAI API:
+
+We have written some code that initializes the OpenAI client and defines a function get_completion. This function sends the OpenAI API a user and system prompt to generate a completion using the specified model.
+
+We’ve already defined the system prompt using a dictionary system prompt that defines the assistant’s role here. The dictionary that pertains to the user input to the model and is incomplete within the function.
+
+Fill in the following missing gaps within the get_completion function:
+
+Model choice: We will use the OpenAI transformer model "gpt-3.5-turbo".
+User prompt: Set the “content” key to the appropriate value.
+Press Run when you’re done.
+
+Checkpoint 2 Passed
+2.
+Set up Streamlit Search App with Chromadb:
+
+To integrate Chromadb, we’ve reproduced all the code from the similarity search app we built in the previous exercise. Recall that collection.query() returns a dictionary of results. We have reformatted results so that when we use the OpenAI API, we can retain the metadata behind each document and quickly reference it by adding to the for loop we had in the previous exercise:
+
+Instead of focusing only on the text within the documents, we use zip to create a list with documents and metadata that we can search through.
+search_results is a list of strings, where the string is formatted as the document content plus the metadata afterward. (Note that the metadata is also a dictionary, so it is formatted as a string of its key-value pairs in metadata_str.)
+Uncomment the relevant lines and scan the code carefully. Make sure the uncommented lines are indented correctly. Run the app from the command line to view the results when you’re done
+
+Checkpoint 3 Passed
+3.
+Prompt using RAG Instructions:
+
+Now, we are ready to use OpenAI to answer user questions based on the search results. This consists of using a prompt that contains the RAG instructions, the user question, and the search results. We have already written the prompt for you by combining these into a single string.
+
+Pass it to the get_completion() function, which calls the OpenAI API and store the result as the variable response.
+Write the prompt response to the Streamlit app.
+Press Run on the code editor when you’re done.
+
+Checkpoint 4 Passed
+4.
+We now have a fully functional app — great job! Test it using a relevant question, like ‘What are the oldest known sports?‘ Or try a question unrelated to the text to see what happens if the answer cannot be found—like ‘What are Lady Gaga’s top hits?‘ or ‘What is your favorite sport?‘
+
+We can still improve and modify things; one obvious way is to include citations in the answer result. Even though we included document metadata in our search_text, our prompt did not specify how we wanted to use the metadata. One way to fix this is to add context to our prompt instructions before calling the OpenAI model.
+
+Here are some tips:
+
+We started with the instructions “Your task is to answer the following user question using the supplied search results.“ We should append to this prompt to include how we saved the metadata information into our search text. This could include a description that might look like: “At the end of each search result will be Metadata.” Lastly, we should specify how we want documents cited in the answers. This could include specific metadata elements or styles, such as “Cite the passages, their chunk index, and their URL in your answer.”
+Try out these additions (or your own) and see how they improve your app’s functionality! Press Run to proceed to the final exercise.
+
+We’ve already created a sample prompt that uses metadata and called it metadata_prompt. You can repeat the steps from the previous checkpoint:
+
+response = get_completion(metadata_prompt)
+st.write(response)
+
+Copy to Clipboard
+
+Remember to comment out the previous write statement and press Run to view the results.
+================
+%dw 2.0
+import * from dw::core::Strings
+import * from dw::core::Dates
+output application/json
+var recipientConfig = {
+    "data": [
+        {
+            "id": "a21271e6-3b43-48de-92c2-f54ce7529dd3",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/trillium_pihp/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "a63538f0-3094-491c-a803-5b2737c4d448",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "a5e65827-e2d5-44da-91bf-3a6ae651b400",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/vaya_pihp/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "312a4235-e7ce-4133-ad32-d0d8f8cf4842",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "5de5ee09-607b-41c8-bf64-46c02e3397d0",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/partners/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "5517cb5c-8c3b-49fc-9145-b0381c0b3a65",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "8c71b52c-cee2-4166-88a8-586945f6d1cc",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/trillium/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "4b58dc01-8cd9-4229-bca0-4d4c9642fa4f",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "b2b18857-a5c0-4b06-9ade-88a02069040a",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/vaya/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "d6f0bf01-760b-4b32-b053-e5af85715384",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "dcc596ff-d65f-4889-b800-a89f3b41a0fd",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/pacificsource/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "24822d75-2e76-464c-b198-4dd1cf863ba3",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "c73fe1ba-c9db-4172-943f-dbe7c3eafa26",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/ihn/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "12a5666c-a596-4516-8c0e-8c6460d9b812",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "571f51a9-00f3-4dec-ad54-4c9849b6b59c",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/umpqua/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "5ca12e12-ad07-4f6d-b0c6-ca30d217c618",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "2b8982bd-f187-4ffb-85e5-fd7a4ea4f2f5",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/healthshare-kpnw/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "285fbaed-f49a-432d-92ba-391c9908df3f",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "0d66182b-66c3-4a4f-ab90-c4cf1e4b522d",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/amestc00/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "fb4d4c06-9c8b-45a7-9f41-7625fb090558",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "d849c6ca-4215-423a-8b98-0de9325d5a13",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/blustc01/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "abf01424-ec1f-4325-8f54-0445075af94e",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "dbba6e1d-58bf-4551-ac7f-1902f33e77ee",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/carstp02/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "949fe558-2003-4fbd-ac21-e70f35c87c6b",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "85d71041-afbd-4826-a304-345b3564da49",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/unistc03/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "6a52cd39-ba2b-4d66-958e-6cdcf1e5f18e",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "c4e43dcb-bba8-43e8-908a-d98cee571848",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/welstc04/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "c3bb04bd-5449-41c9-a1e4-2f89ebea4140",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "50c71272-aeb6-4c05-b819-afdef512ced1",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/partners_pihp/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "289516f4-f0ce-4d80-a599-150e5e9cc65f",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "ea796cb0-1e69-4524-927d-08c73549a0e5",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": false,
+                "invoice_response_file_s3_path": "pilotfish-edi/NY1115-healthyalliance/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "bcd982c9-73f0-49fc-bfc0-03f0603d58f4",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "67bdfb04-561e-4266-bac2-7c2e96b8d85c",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/healthshare-careor/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "3f8572db-658e-4e9b-94bd-2f7ed259e698",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "455042a2-b6aa-4d6e-a4ce-7c74865196cd",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/NY1115-metroplus/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "629a1bc6-dbf2-4fa4-b300-0b7f6357e5ce",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "9fb7ce8b-150a-482e-b4a8-5524d7eb4a6c",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/NY1115-healthyalliance/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "a62f8d93-d71b-4c70-bafa-c2a7f4eaa693",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "41d30e9d-0cd2-4eee-8a36-ae7eda84ccea",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": false,
+                "invoice_response_file_s3_path": "pilotfish-edi/NY1115-healthyalliance/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "31716852-9702-4166-9493-e05f27551f32",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "7c47b6a0-186f-46e8-bcec-32020bc07fc0",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/NY1115-mvp/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "2b645e3f-cf8d-4729-8871-4d415de1f462",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "20d10256-419f-427d-b9a3-364188e1d0c5",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish-edi/NY1115-carecompasscollaborative/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": true
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "4e1b59a7-a944-4e54-b242-6274a6136136",
+                        "type": "payer"
+                    }
+                }
+            }
+        },
+        {
+            "id": "f724c366-8aec-48b3-b73e-c8e36eec5452",
+            "type": "payer_configuration",
+            "attributes": {
+                "use_invoice_response_file": true,
+                "invoice_response_file_s3_path": "pilotfish/trillium_or/invoice_response",
+                "invoice_response_file_delimiter": "|",
+                "invoice_response_file_extension": "txt",
+                "use_claims": false
+            },
+            "relationships": {
+                "payer": {
+                    "data": {
+                        "id": "ef4b9fea-4dc7-48e2-b35e-60d82761f63c",
+                        "type": "payer"
+                    }
+                }
+            }
+        }
+    ]
+}
+var interchangeData = {
+    "data": {
+        "id": "57c2f45c-1ea0-4eec-863c-17679247cc07",
+        "type": "x12_interchange",
+        "attributes": {
+            "code": "286364",
+            "payer_id": "fb4d4c06-9c8b-45a7-9f41-7625fb090558",
+            "created_at": "2024-06-17T23:05:59.070Z",
+            "x12_groups": [
+                {
+                    "id": "86a7a19b-b495-4cdf-9d15-c43e91c778de",
+                    "type": "x12_group",
+                    "attributes": {
+                        "code": "999999999",
+                        "x12_transactions": [
+                            {
+                                "id": "357efead-5fe6-46e8-a13c-087ff00c8aff",
+                                "type": "x12_transaction",
+                                "attributes": {
+                                    "code": "2"
+                                }
+                            },
+                            {
+                                "id": "a6926fa8-4bfa-4848-8685-02d5d114bf96",
+                                "type": "x12_transaction",
+                                "attributes": {
+                                    "code": "1"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}
+var vInvoiceData = [
+  {
+    "id": "be420e79-488e-4e54-b786-2d46f4f5abe6",
+    "type": "invoice",
+    "attributes": {
+      "amount_paid": 0,
+      "approved_at": null,
+      "case_id": "d8edca47-6a05-44ab-bba5-1cc4d82c1978",
+      "client_address_city": "Alexander",
+      "client_address_county": "Buncombe County",
+      "client_address_line_1": "50 Main street",
+      "client_address_line_2": null,
+      "client_address_postal_code": "28701",
+      "client_address_state": "NC",
+      "client_dob": "1980-12-20T00:00:00.000Z",
+      "client_first_name": "Sallie",
+      "client_gender": "undisclosed",
+      "client_id": "f59328f7-fbf3-4367-8761-6f4c690f8e46",
+      "client_last_name": "Aaron",
+      "client_middle_name": null,
+      "client_name": "Sallie Aaron",
+      "created_at": "2023-06-15T18:13:39.075Z",
+      "dispute_reason_note": null,
+      "fee_schedule_id": "0af45bca-3345-446c-9370-a56e29e423eb",
+      "fee_schedule_name": "Healthy Opportunities",
+      "fee_schedule_program_external_code": "FSFPL",
+      "fee_schedule_program_id": "07706293-f5fe-450e-b600-9eb2f6727def",
+      "fee_schedule_program_name": "Healthy Food Box (for Pick-Up) (Large)",
+      "fee_schedule_program_payment_type": "fee_for_service",
+      "fee_schedule_program_unit_rate": 14286,
+      "fee_schedule_program_unit": "food box",
+      "insurance_external_group_id": null,
+      "insurance_external_member_id": "159786",
+      "invoice_batch_id": null,
+      "invoice_dispute_reason_id": null,
+      "invoice_rejection_reason_id": "4f93e084-9d09-4263-85cb-e24c0c1af079",
+      "invoice_status": "transmitted_to_payer",
+      "network_lead_id": "0c6d5d9f-c4c4-4a2e-9f2e-9871ec589558",
+      "original_version_id": null,
+      "payer_external_id": "AMESTC00",
+      "payer_id": "fb4d4c06-9c8b-45a7-9f41-7625fb090558",
+      "payer_name": "AmeriHealth Caritas North Carolina",
+      "payment_date": null,
+      "payment_received": false,
+      "plan_id": "c96c995b-d24d-46d1-a84c-90b998046425",
+      "plan_name": "AmeriHealth Caritas North Carolina",
+      "previous_version_id": null,
+      "provided_service_ends_at": "2023-10-23T12:45:24.004Z",
+      "provided_service_id": "644b4e97-2193-440b-b842-df86797c1dc6",
+      "provided_service_metadata": null,
+      "provided_service_starts_at": "2023-06-07T12:58:01.704Z",
+      "provided_service_unit_amount": 28200,
+      "provider_address_city": "Forest City",
+      "provider_address_line_1": "2270 US Highway 74A Byp",
+      "provider_address_line_2": null,
+      "provider_address_postal_code": "28043",
+      "provider_address_state": "NC",
+      "provider_id": "1faa1efe-da32-4265-a9fc-cd305784a482",
+      "provider_name": "Greater Hickory Cooperative Christian Ministry",
+      "provider_npi": "40333391",
+      "provider_tin": "562148626",
+      "rejection_note": null,
+      "response_date": "2023-08-08T00:00:00.000Z",
+      "service_authorization_short_id": null,
+      "short_id": "23L9EKN0T6",
+      "social_plan_name": "Healthy Opportunities - ACNC",
+      "state": "active",
+      "submitted_to_network_lead_at": null,
+      "submitter_id": null,
+      "total_amount_invoiced": 402865200,
+      "updated_at": "2024-10-03T13:42:28.884Z",
+      "x12_transaction_id": "52342211-b4ff-42bd-8898-724e0f377c07",
+      "attachments": [
+        
+      ],
+      "corrected": false,
+      "last_transmitted_short_id": null,
+      "network_lead": {
+        "id": "0c6d5d9f-c4c4-4a2e-9f2e-9871ec589558",
+        "type": "provider",
+        "attributes": {
+          "licensed": true,
+          "name": "HOPS Network Lead - for SCI team",
+          "description": "\\u003cdiv\\u003eNetwork Lead for use by SCI or internal Unite Us team members. \\u003c/div\\u003e",
+          "website_url": "http://www.uniteus.com",
+          "email_addresses": [
+            {
+              "is_primary": true,
+              "email_address": "nl_user_1@demo.com"
+            }
+          ],
+          "phone_numbers": [
+            {
+              "phone_type": "phone",
+              "country_code": "1",
+              "phone_number": "5555555555"
+            }
+          ],
+          "hours": null,
+          "state": "active",
+          "provider_type": "network_lead",
+          "logo_url": null,
+          "focus": {
+            "health_insurance_focus": true
+          },
+          "status": null,
+          "primary_contact_name": null,
+          "sensitive": false,
+          "national_provider_identifier": null,
+          "tax_identification_number": null,
+          "require_contact_preferences": false,
+          "managed": false,
+          "addresses": [
+            {
+              "address_type": null,
+              "line_1": "2110 Blue Ridge Rd",
+              "line_2": null,
+              "city": "Raleigh",
+              "county": "Wake County",
+              "state": "NC",
+              "postal_code": "27607",
+              "country": "United States",
+              "latitude": 35.8078411,
+              "longitude": -78.70395119999999,
+              "is_primary": null
+            }
+          ]
+        },
+        "relationships": {
+          "programs": {
+            "data": [
+              
+            ]
+          },
+          "networks": {
+            "data": [
+              {
+                "id": "92620e87-81e5-4a57-9895-d0fa3c3bf63c",
+                "type": "network"
+              }
+            ]
+          },
+          "payer": {
+            "data": null
+          },
+          "provider_group": {
+            "data": null
+          }
+        }
+      },
+      "original_version_short_id": null,
+      "original_transmitted_short_id": null,
+      "place_of_service_code": null,
+      "plan_external_id": null,
+      "previous_version_invoice_dispute_reason_display_name": null,
+      "procedure_codes": [
+        {
+          "id": "54ec4bf2-4a46-4a6f-9465-dc6daf4de6b7",
+          "type": "procedure_code",
+          "attributes": {
+            "code": "S9977",
+            "description": "Meals, per diem not otherwise specified"
+          },
+          "relationships": {
+            "payer": {
+              "data": {
+                "id": "fb4d4c06-9c8b-45a7-9f41-7625fb090558",
+                "type": "payer"
+              }
+            },
+            "procedure_code_modifiers": {
+              "data": [
+                {
+                  "id": "8f636495-d354-463f-9089-666259fe4fd6",
+                  "type": "procedure_code_modifier"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "procedure_code_modifiers": [
+        {
+          "id": "8f636495-d354-463f-9089-666259fe4fd6",
+          "type": "procedure_code_modifier",
+          "attributes": {
+            "code": "U4",
+            "description": "Medicaid Level of Care 4",
+            "dropdown_text": null
+          },
+          "relationships": {
+            "procedure_code": {
+              "data": {
+                "id": "54ec4bf2-4a46-4a6f-9465-dc6daf4de6b7",
+                "type": "procedure_code"
+              }
+            }
+          }
+        }
+      ],
+      "provided_service_notes": null,
+      "zcodes": [
+        {
+          "id": "5a82cc3c-203e-4b47-b99a-984a9c77ffd4",
+          "type": "zcode",
+          "attributes": {
+            "code": "Z59.1",
+            "description": "Inadequate housing"
+          }
+        },
+        {
+          "id": "d9149bca-2c64-4d2c-b032-871eca4c1d48",
+          "type": "zcode",
+          "attributes": {
+            "code": "Z59.41",
+            "description": "Lack of adequate food"
+          }
+        }
+      ]
+    }
+  }
+]
+ 
+fun render2010baDmg(invoice) = not isEmpty(invoice.attributes.client_dob)
+fun render2010bbRefG2(invoice) = (invoice.attributes.provider_npi startsWith ("3")) or (invoice.attributes.provider_npi startsWith ("4"))
+fun render2300Dtp454(invoice) = not isEmpty(invoice.attributes.provided_service_starts_at)
+fun render2300Dtp431(invoice) = not isEmpty(invoice.attributes.submitted_to_network_lead_at)
+fun render2300PwkAttachments(invoice) = not isEmpty(invoice.attributes.attachments)
+ 
+fun getServiceAuthShortId(invoice) = invoice.attributes.service_authorization_short_id
+fun getMetadataAuthId(invoice) = (invoice.attributes.provided_service_metadata filter ((item, index) -> item.field == "authorization_id"))[0].value
+fun getServiceAuthId(invoice) = if (getServiceAuthShortId(invoice) != null) getServiceAuthShortId(invoice) else if (getMetadataAuthId(invoice) != null) getMetadataAuthId(invoice) else null
+fun render2300Ref9C(invoice) = invoice.attributes.previous_version_invoice_dispute_reason_display_name != null
+fun render2300RefLX(invoice) = invoice.attributes.last_transmitted_short_id != null
+fun render2300RefEA(invoice) = invoice.attributes.original_version_short_id != null
+fun render2300RefF8(invoice) = (invoice.attributes.corrected == true) and (invoice.attributes.original_transmitted_short_id != null)
+fun render2300RefP4(invoice) = invoice.attributes.fee_schedule_program_name != null
+fun createHiTag(i) = "HI" ++ ((i + 1) as String { format: "00" }) ++ "_HealthCareCodeInformation"
+fun buildNetworkLeadDetails(invoice) = invoice.attributes.network_lead.attributes.name ++ "|" ++
+  invoice.attributes.network_lead.attributes.email_addresses.email_address[0] ++ "|" ++
+  invoice.attributes.network_lead.attributes.phone_numbers.phone_number[0]
+fun psPaidByUnit(invoice) = ["fee_for_service", "per_member_per_month", "per_diem"] contains invoice.attributes.fee_schedule_program_payment_type
+fun psStartsAt(invoice) = invoice.attributes.provided_service_starts_at as Date as String { format: "YYYYMMdd" }
+fun defaultingPsEndsAt(invoice) = (invoice.attributes.provided_service_ends_at default invoice.attributes.provided_service_starts_at) as Date as String { format: "YYYYMMdd" }
+
+var currentTime = (((now() as LocalTime - |00:00:00|).hours *3600) + ((now() as LocalTime - |00:00:00|).minutes * 60)) * 1000
+---
+{
+  "Delimiters": "*:^~",
+  "TransactionSets": {
+    "v005010X222A1": {
+      "837": vInvoiceData map (invoice) ->
+        {"Interchange": {
+          "ISA01": recipientConfig."ISA_Segment".authorizationQualifierCode default "00",
+          "ISA02": recipientConfig."ISA_Segment".authorizationInformation default "          ",
+          "ISA03": recipientConfig."ISA_Segment".securityQualifierCode default "00",
+          "ISA04": recipientConfig."ISA_Segment".securityInformation default "          ",
+          "ISA05": recipientConfig."ISA_Segment".senderIDQualifier default "ZZ",
+          "ISA06": rightPad((recipientConfig."ISA_Segment".senderID replace ("'") with ""), 15, " ") default "618764982" as Number,
+          "ISA07": recipientConfig."ISA_Segment".recieverIDQualifier default "ZZ",
+          "ISA08": rightPad((recipientConfig."ISA_Segment".recieverID replace ("'") with "") default recipientConfig.payerDetails.payerId, 15, " ") default "20416" as Number,
+          "ISA09": now() as Date{ format:"YYYYMMdd" },
+          "ISA10": currentTime,
+          "ISA11": "^",
+          "ISA12": "00501",
+          "ISA13": interchangeData.data.attributes.code as Number,
+          "ISA14": "1",
+          "ISA15": if(false) "P"  else "T",
+          "ISA16": ":"
+        },
+        "Group": {
+          "GS01": "HC",
+          "GS02": recipientConfig.GS_Segment.applicationSenderID default trim(recipientConfig."ISA_Segment".senderID replace ("'") with ""),
+          "GS03": recipientConfig.GS_Segment.applicationRecieverID default trim(recipientConfig."ISA_Segment".recieverID replace ("'") with ""),
+		  "GS04": now() as Date{ format:"YYYYMMdd" },
+          "GS05": currentTime,
+          "GS07": "X",
+          "GS08": "005010X222A1"
+        },
+        
+        "SetHeader": {
+          "ST01": "837",
+          "ST02": leftPad((((interchangeData.data.attributes.x12_groups.attributes)[0].x12_transactions) filter ((item, index) -> item.id == invoice.attributes.x12_transaction_id))[0].attributes.code, 9, 0),
+          "ST03": "005010X222A1"
+        },
+        "Heading": {
+          "BHT_BeginningOfHierarchicalTransaction": {
+            "BHT01_HierarchicalStructureCode": "0019",
+            "BHT02_TransactionSetPurposeCode": "00",
+            "BHT03_OriginatorApplicationTransactionIdentifier": invoice.id withMaxSize 30,
+            "BHT04_TransactionSetCreationDate": now() as Date { format:"YYYYMMdd" },
+            "BHT05_TransactionSetCreationTime": currentTime,
+            "BHT06_ClaimOrEncounterIdentifier": "CH"
+          },
+          "1000A_Loop": {
+            "NM1_SubmitterName": {
+              "NM101_EntityIdentifierCode": "41",
+              "NM102_EntityTypeQualifier": "2",
+              "NM103_SubmitterLastOrOrganizationName": recipientConfig."1000A_Loop"."NM1-03" withMaxSize 60 default invoice.attributes.payer_name withMaxSize 60,
+              "NM108_IdentificationCodeQualifier": "46",
+              "NM109_SubmitterIdentifier": recipientConfig."1000A_Loop"."NM1-09" default invoice.attributes.payer_external_id
+            },
+            "PER_SubmitterEDIContactInformation": [
+              {
+                "PER01_ContactFunctionCode": "IC",
+                "PER02_SubmitterContactName": "UniteUs",
+                "PER03_CommunicationNumberQualifier": "TE",
+                "PER04_CommunicationNumber": "6467997154"
+              }
+            ]
+          },
+          "1000B_Loop": {
+            "NM1_ReceiverName": {
+              "NM101_EntityIdentifierCode": "40",
+              "NM102_EntityTypeQualifier": "2",
+              "NM103_ReceiverName": recipientConfig."1000B_Loop"."NM1-03" withMaxSize 60 default invoice.attributes.payer_name withMaxSize 60,
+              "NM108_IdentificationCodeQualifier": "46",
+              "NM109_ReceiverPrimaryIdentifier": recipientConfig."1000B_Loop"."NM1-09" default invoice.attributes.payer_external_id
+            }
+          }
+        },
+        "Detail": {
+          "2000A_Loop": [
+            {
+              "HL_BillingProviderDetails": {
+                "HL01_HierarchicalID": "1",
+                "HL03_HierarchicalParentID": "20",
+                "HL04_ HierarchicalChildCode": "1"
+              },
+              "PRV_BillingProviderSpecialtyInformation": {
+                "PRV01_ProviderCode": "BI",
+                "PRV02_ReferenceIdentificationQualifier": "PXC",
+                "PRV03_ProviderTaxonomyCode": "251K00000X"
+              },
+              "2010AA_Loop": {
+                "NM1_BillingProviderName": {
+                  "NM101_EntityIdentifierCode": "85",
+                  "NM102_EntityTypeQualifier": "2",
+                  "NM103_BillingProviderLastOrOrganizationalName": invoice.attributes.provider_name withMaxSize 60,
+                  "NM108_IdentificationCodeQualifier": if((invoice.attributes.provider_npi startsWith ("1")) or (invoice.attributes.provider_npi startsWith ("2"))) "XX" else null,
+                  "NM109_BillingProviderIdentifier": if((invoice.attributes.provider_npi startsWith ("1")) or (invoice.attributes.provider_npi startsWith ("2"))) invoice.attributes.provider_npi else null
+                },
+                "N3_BillingProviderAddress": {
+                  "N301_BillingProviderAddressLine": invoice.attributes.provider_address_line_1 withMaxSize 55,
+                  "N302_BillingProviderAddressLine": invoice.attributes.provider_address_line_2 withMaxSize 55
+                },
+                "N4_BillingProviderCityStateZIPCode": {
+                  "N401_BillingProviderCityName": invoice.attributes.provider_address_city default invoice.attributes.provider_address_city withMaxSize 30,
+                  "N402_BillingProviderStateOrProvinceCode": invoice.attributes.provider_address_state,
+                  "N403_BillingProviderPostalZoneOrZIPCode": if(sizeOf(invoice.attributes.provider_address_postal_code) > 5) invoice.attributes.provider_address_postal_code else (invoice.attributes.provider_address_postal_code ++ "9999")
+                },
+                "REF_BillingProviderTaxIdentification": {
+                  "REF01_ReferenceIdentificationQualifier": "EI",
+                  "REF02_BillingProviderTaxIdentificationNumber": invoice.attributes.provider_tin
+                }
+              },
+              "2000B_Loop": [
+                {
+                  "HL_SubscriberHierarchy": {
+                    "HL01_HierarchicalID": "2",
+                    "HL02_HierarchicalParentID": "1",
+                    "HL03_HierarchicalLevelCode": "22",
+                    "HL04_HierarchicalChildCode": "0"
+                  },
+                  "SBR_SubscriberInformation": {
+                    "SBR01_PayerResponsibilitySequenceNumberCode": "P",
+                    "SBR02_IndividualRelationshipCode": "18",
+                    "SBR09_ClaimFilingIndicatorCode": "ZZ"
+                  },
+                  "2010BA_Loop": {
+                    "NM1_SubscriberName": {
+                      "NM101_EntityIdentifierCode": "IL",
+                      "NM102_EntityTypeQualifier": "1",
+                      "NM103_SubscriberLastName": invoice.attributes.client_last_name default "",
+                      "NM104_SubscriberFirstName": invoice.attributes.client_first_name default "",
+                      "NM105_SubscriberMiddleName": invoice.attributes.client_middle_name default "",
+                      "NM108_IdentificationCodeQualifier": if(not isEmpty(invoice.attributes.insurance_external_member_id)) "MI" else null,
+                      "NM109_SubscriberPrimaryIdentifier": invoice.attributes.insurance_external_member_id
+                    },
+                    "N3_SubscriberAddress": {
+                      "N301_SubscriberAddressLine": invoice.attributes.client_address_line_1 default "1234 No Address Found"
+                    },
+                    "N4_SubscriberCityStateZIPCode": {
+                      "N401_SubscriberCityName": invoice.attributes.client_address_city default "AnyTown",
+                      "N402_SubscriberStateCode": invoice.attributes.client_address_state default "NC",
+                      "N403_SubscriberPostalZoneOrZIPCode": invoice.attributes.client_address_postal_code default "27601"
+                    },
+                    ("DMG_SubscriberDemographicInformation": {
+                      "DMG01_DateTimePeriodFormatQualifier": "D8",
+                      "DMG02_SubscriberBirthDate": (invoice.attributes.client_dob as Date) as String{ format:"YYYYMMdd" },
+                      "DMG03_SubscriberGenderCode": upper((invoice.attributes.client_gender[0]))
+                    }) if render2010baDmg(invoice)
+                  },
+                  "2010BB_Loop": {
+                    "NM1_PayerName": {
+                      "NM101_EntityIdentifierCode": "PR",
+                      "NM102_EntityTypeQualifier": "2",
+                      "NM103_PayerName": invoice.attributes.payer_name,
+                      "NM108_IdentificationCodeQualifier": "PI",
+                      "NM109_PayerIdentifier": recipientConfig."2010BB_Loop"."NM1-09" default invoice.attributes.payer_external_id
+                    },
+                    ("REF_BillingProviderSecondaryIdentification": [
+                      {
+                        "REF01_ReferenceIdentificationQualifier": "G2",
+                        "REF02_BillingProviderSecondaryIdentifier": invoice.attributes.provider_npi
+                      }
+                    ]) if render2010bbRefG2(invoice)
+                  },
+                  "2300_Loop": [ {
+                    "CLM_ClaimInformation": {
+                      "CLM01_PatientControlNumber": invoice.attributes.short_id,
+                      "CLM02_TotalClaimChargeAmount": (invoice.attributes.total_amount_invoiced / 100) as String{ format:"#.00" } as Number,
+                      "CLM05_HealthCareServiceLocationInformation": {
+                        "CLM01_PlaceOfServiceCode": recipientConfig."2300_Loop"."CLM05-1" default invoice.attributes.place_of_service_code,
+                        "CLM02_FacilityCodeQualifier": "B",
+                        "CLM03_ClaimFrequencyCode": if(invoice.attributes.corrected == true) "7" else "1"
+                      },
+                      "CLM06_ProviderOrSupplierSignatureIndicator": "Y",
+                      "CLM07_AssignmentOrPlanParticipationCode": "A",
+                      "CLM08_BenefitsAssignmentCertificationIndicator": "Y",
+                      "CLM09_ReleaseOfInformationCode": "I"
+                    },
+                    ("DTP_DateInitialTreatmentDate": {
+                      "DTP01_DateTimeQualifier": "454",
+                      "DTP02_DateTimePeriodFormatQualifier": "D8",
+                      "DTP03_InitialTreatmentDate": (invoice.attributes.provided_service_starts_at as Date) as String{ format:"YYYYMMdd" }
+                    }) if render2300Dtp454(invoice),
+                    ("DTP_DateOnsetOfCurrentIllnessOrSymptom": {
+                      "DTP01_DateTimeQualifier": "431",
+                      "DTP02_DateTimePeriodFormatQualifier": "D8",
+                      "DTP03_OnsetOfCurrentIllnessOrInjuryDate": (invoice.attributes.submitted_to_network_lead_at as Date) as String{ format:"YYYYMMdd" }
+                    }) if render2300Dtp431(invoice),
+                    ("PWK_ClaimSupplementalInformation": [ {
+                        "PWK01_AttachmentReportTypeCode": "03",
+                        "PWK02_AttachmentTransmissionCode": "FT",
+                        "PWK05_SupplimentCodeQualifier": "AC",
+                        "PWK06_IdentififcationCode": invoice.attributes.short_id
+                    } ]) if render2300PwkAttachments(invoice),
+                    (recipientConfig."2300_Loop"."REF-01" map (item, index) -> {
+                      ("REF_PriorAuthorization": {
+                        "REF01_ReferenceIdentificationQualifier": "G1",
+                        "REF02_PriorAuthorizationNumber": getServiceAuthId(invoice)
+                      }) if ((item == "G1") and (getServiceAuthId(invoice) != null)),
+                      ("REF_AdjustedRepricedClaimNumber": {
+                        "REF01_ReferenceIdentificationQualifier": "9C",
+                        "REF02_AdjustedRepricedClaimReferenceNumber": invoice.attributes.previous_version_invoice_dispute_reason_display_name withMaxSize 50
+                      }) if ((item == "9C") and render2300Ref9C(invoice)),
+                      ("REF_InvestigationalDeviceExemptionNumber": {
+                        "REF01_ReferenceIdentificationQualifier": "LX",
+                        "REF02_InvestigationalDeviceExemptionIdentifier": invoice.attributes.last_transmitted_short_id
+                      }) if ((item == "LX") and render2300RefLX(invoice)),
+                      ("REF_MedicalRecordNumber": {
+                        "REF01_ReferenceIdentificationQualifier": "EA",
+                        "REF02_MedicalRecordNumber": invoice.attributes.original_version_short_id
+                      }) if ((item == "EA") and render2300RefEA(invoice)),
+                      ("REF_PayerClaimControlNumber": {
+                        "REF01_ReferenceIdentificationQualifier": "F8",
+                        "REF02_PayerClaimControlNumber": invoice.attributes.original_transmitted_short_id
+                      }) if ((item == "F8") and render2300RefF8(invoice)),
+                      ("REF_DemonstrationProjectIdentifier": {
+                        "REF01_ReferenceIdentificationQualifier": "P4",
+                        "REF02_DemonstrationProjectIdentifier": invoice.attributes.fee_schedule_program_name withMaxSize 50
+                      }) if ((item == "P4") and render2300RefP4(invoice))
+                    }),
+                    "HI_HealthCareDiagnosisCode": {
+                      (invoice.attributes.zcodes map ((item, index) -> {
+                        ((createHiTag(index)): {
+                          "HI01_DiagnosisTypeCode": if(index == 0) "ABK" else "ABF",
+                          "HI02_DiagnosisCode": item.attributes.code replace "." with ""
+                        })
+                      }))
+                    },
+                    "NTE_ClaimNote": {
+                      "NTE01_NoteReferenceCode": "TPO",
+                      "NTE02_ClaimNoteText": recipientConfig.note default buildNetworkLeadDetails(invoice)
+                    },
+                    "2310B_Loop": {
+                      "NM1_RenderingProviderName": {
+                        "NM101_EntityIdentifierCode": "82",
+                        "NM102_EntityTypeQualifier": "2",
+                        "NM103_RenderingProviderLastOrOrganizationName": recipientConfig."2310B_loop"."NM1-03" default invoice.attributes.provider_name,
+                        "NM108_IdentificationCodeQualifier": if ((invoice.attributes.provider_npi startsWith "1") or (invoice.attributes.provider_npi startsWith "2"))
+                          "XX" else null,
+                        "NM109_RenderingProviderIdentifier": if ((invoice.attributes.provider_npi startsWith "1") or (invoice.attributes.provider_npi startsWith "2"))
+                          invoice.attributes.provider_npi else null
+                      },
+                      "REF_ClaimIdentifierForTransmissionIntermediaries": {
+                        "REF01_ReferenceIdentificationQualifier": if ((invoice.attributes.provider_npi startsWith "3") or (invoice.attributes.provider_npi startsWith "4"))
+                          "G2" else null,
+                        "REF02_ReferenceIdentification": if ((invoice.attributes.provider_npi startsWith "3") or (invoice.attributes.provider_npi startsWith "4"))
+                          invoice.attributes.provider_npi else null
+                      }
+                    },
+                    "2400_Loop": flatten(invoice.attributes.procedure_codes) map (pcit, pci) -> {
+                      "LX_ServiceLineNumber": {
+                        "LX01_AssignedNumber": pci + 1
+                      },
+                      "SV1_ProfessionalService": ({
+                        "SV101_CompositeMedicalProcedureIdentifier": ({
+                          "SV101_ProductOrServiceIDQualifier": "HC",
+                          "SV107_Description": invoice.attributes.fee_schedule_program_external_code,
+                          "SV102_ProcedureCode": pcit.attributes.code,
+                        } ++ (
+                          {((pcit.relationships.procedure_code_modifiers.data map ((item, index) ->
+                            if(!(index > 4)) {
+                              ("SV" ++ (103 + index) ++ "_ProcedureModifier"):
+                                ((invoice.attributes.procedure_code_modifiers filter (invoice.id == item.id)).attributes.code)[0]
+                            } else {}
+                          )))}
+                        )),
+                        "SV102_LineItemChargeAmount": (invoice.attributes.total_amount_invoiced / 100) as String{ format:"#.00" } as Number,
+                        "SV103_UnitOrBasisForMeasurementCode": "UN",
+                        "SV104_ServiceUnitCount": (if(psPaidByUnit(invoice)) invoice.attributes.provided_service_unit_amount else "1") as Number,
+                        "SV107_CompositeDiagnosisCodePointer": {
+                          "SV101_DiagnosisCodePointer": 1
+                        }
+                      }),
+                      "DTP_DateServiceDate": {
+                        "DTP01_DateTimeQualifier": "472",
+                        "DTP02_DateTimePeriodFormatQualifier": "RD8",
+                        "DTP03_ServiceDate": psStartsAt(invoice) ++ "-" ++ defaultingPsEndsAt(invoice)
+                      },
+                      ("NTE_LineNote": {
+                        "NTE01_NoteReferenceCode": "ADD",
+                        "NTE02_LineNoteText": invoice.attributes.provided_service_metadata[0].value
+                      }) if invoice.attributes.provided_service_metadata[0].field == "service_description"
+                    }
+                  }]
+                }
+              ]
+            }
+          ]
+        },
+        "Summary": {}
+      }
+    }
+  }
+}
+==========
+%dw 2.0
+import * from dw::core::Strings
+import * from dw::core::Dates
+output application/java
+var recipientConfig = vars.vPayersDetails
+var interchangeData = vars.vX12Transactions
+var vInvoiceData = flatten(vars.vInvoices.Invoices.payload.data)
+ 
+fun render2010baDmg(invoice) = not isEmpty(invoice.attributes.client_dob)
+fun render2010bbRefG2(invoice) = (invoice.attributes.provider_npi startsWith ("3")) or (invoice.attributes.provider_npi startsWith ("4"))
+fun render2300Dtp454(invoice) = not isEmpty(invoice.attributes.provided_service_starts_at)
+fun render2300Dtp431(invoice) = not isEmpty(invoice.attributes.submitted_to_network_lead_at)
+fun render2300PwkAttachments(invoice) = not isEmpty(invoice.attributes.attachments)
+ 
+fun getServiceAuthShortId(invoice) = invoice.attributes.service_authorization_short_id
+fun getMetadataAuthId(invoice) = (invoice.attributes.provided_service_metadata filter ((item, index) -> item.field == "authorization_id"))[0].value
+fun getServiceAuthId(invoice) = if (getServiceAuthShortId(invoice) != null) getServiceAuthShortId(invoice) else if (getMetadataAuthId(invoice) != null) getMetadataAuthId(invoice) else null
+fun render2300Ref9C(invoice) = invoice.attributes.previous_version_invoice_dispute_reason_display_name != null
+fun render2300RefLX(invoice) = invoice.attributes.last_transmitted_short_id != null
+fun render2300RefEA(invoice) = invoice.attributes.original_version_short_id != null
+fun render2300RefF8(invoice) = (invoice.attributes.corrected == true) and (invoice.attributes.original_transmitted_short_id != null)
+fun render2300RefP4(invoice) = invoice.attributes.fee_schedule_program_name != null
+fun createHiTag(i) = "HI" ++ ((i + 1) as String { format: "00" }) ++ "_HealthCareCodeInformation"
+fun buildNetworkLeadDetails(invoice) = invoice.attributes.network_lead.attributes.name ++ "|" ++
+  invoice.attributes.network_lead.attributes.email_addresses.email_address[0] ++ "|" ++
+  invoice.attributes.network_lead.attributes.phone_numbers.phone_number[0]
+fun psPaidByUnit(invoice) = ["fee_for_service", "per_member_per_month", "per_diem"] contains invoice.attributes.fee_schedule_program_payment_type
+fun psStartsAt(invoice) = invoice.attributes.provided_service_starts_at as Date as String { format: "YYYYMMdd" }
+fun defaultingPsEndsAt(invoice) = (invoice.attributes.provided_service_ends_at default invoice.attributes.provided_service_starts_at) as Date as String { format: "YYYYMMdd" }
+
+var currentTime = (((now() as LocalTime - |00:00:00|).hours *3600) + ((now() as LocalTime - |00:00:00|).minutes * 60)) * 1000
+---
+{
+  "Delimiters": "*:^~",
+  "TransactionSets": {
+    "v005010X222A1": {
+      "837": vInvoiceData map (invoice) ->
+        {"Interchange": {
+          "ISA01": recipientConfig."ISA_Segment".authorizationQualifierCode default "00",
+          "ISA02": recipientConfig."ISA_Segment".authorizationInformation default "          ",
+          "ISA03": recipientConfig."ISA_Segment".securityQualifierCode default "00",
+          "ISA04": recipientConfig."ISA_Segment".securityInformation default "          ",
+          "ISA05": recipientConfig."ISA_Segment".senderIDQualifier default "ZZ",
+          "ISA06": rightPad((recipientConfig."ISA_Segment".senderID replace ("'") with ""), 15, " "),
+          "ISA07": recipientConfig."ISA_Segment".recieverIDQualifier default "ZZ",
+          "ISA08": rightPad((recipientConfig."ISA_Segment".recieverID replace ("'") with "") default recipientConfig.payerDetails.payerId, 15, " "),
+          "ISA09": now() as Date{ format:"YYYYMMdd" },
+          "ISA10": currentTime,
+          "ISA11": "^",
+          "ISA12": "00501",
+          "ISA13": interchangeData.data.attributes.code as Number,
+          "ISA14": "1",
+          "ISA15": if(Mule::p('env') == "prod") "P"  else "T",
+          "ISA16": ":"
+        },
+        "Group": {
+          "GS01": "HC",
+          "GS02": recipientConfig.GS_Segment.applicationSenderID default trim(recipientConfig."ISA_Segment".senderID replace ("'") with ""),
+          "GS03": recipientConfig.GS_Segment.applicationRecieverID default trim(recipientConfig."ISA_Segment".recieverID replace ("'") with ""),
+		  "GS04": now() as Date{ format:"YYYYMMdd" },
+          "GS05": currentTime,
+          "GS07": "X",
+          "GS08": "005010X222A1"
+        },
+        
+        "SetHeader": {
+          "ST01": "837",
+          "ST02": leftPad((((interchangeData.data.attributes.x12_groups.attributes)[0].x12_transactions) filter ((item, index) -> item.id == invoice.attributes.x12_transaction_id))[0].attributes.code, 9, 0),
+          "ST03": "005010X222A1"
+        },
+        "Heading": {
+          "BHT_BeginningOfHierarchicalTransaction": {
+            "BHT01_HierarchicalStructureCode": "0019",
+            "BHT02_TransactionSetPurposeCode": "00",
+            "BHT03_OriginatorApplicationTransactionIdentifier": invoice.id withMaxSize 30,
+            "BHT04_TransactionSetCreationDate": now() as Date { format:"YYYYMMdd" },
+            "BHT05_TransactionSetCreationTime": currentTime,
+            "BHT06_ClaimOrEncounterIdentifier": "CH"
+          },
+          "1000A_Loop": {
+            "NM1_SubmitterName": {
+              "NM101_EntityIdentifierCode": "41",
+              "NM102_EntityTypeQualifier": "2",
+              "NM103_SubmitterLastOrOrganizationName": recipientConfig."1000A_Loop"."NM1-03" withMaxSize 60 default invoice.attributes.payer_name withMaxSize 60,
+              "NM108_IdentificationCodeQualifier": "46",
+              "NM109_SubmitterIdentifier": recipientConfig."1000A_Loop"."NM1-09" default invoice.attributes.payer_external_id
+            },
+            "PER_SubmitterEDIContactInformation": [
+              {
+                "PER01_ContactFunctionCode": "IC",
+                "PER02_SubmitterContactName": "UniteUs",
+                "PER03_CommunicationNumberQualifier": "TE",
+                "PER04_CommunicationNumber": "6467997154"
+              }
+            ]
+          },
+          "1000B_Loop": {
+            "NM1_ReceiverName": {
+              "NM101_EntityIdentifierCode": "40",
+              "NM102_EntityTypeQualifier": "2",
+              "NM103_ReceiverName": recipientConfig."1000B_Loop"."NM1-03" withMaxSize 60 default invoice.attributes.payer_name withMaxSize 60,
+              "NM108_IdentificationCodeQualifier": "46",
+              "NM109_ReceiverPrimaryIdentifier": recipientConfig."1000B_Loop"."NM1-09" default invoice.attributes.payer_external_id
+            }
+          }
+        },
+        "Detail": {
+          "2000A_Loop": [
+            {
+              "HL_BillingProviderDetails": {
+                "HL01_HierarchicalID": "1",
+                "HL03_HierarchicalParentID": "20",
+                "HL04_ HierarchicalChildCode": "1"
+              },
+              "PRV_BillingProviderSpecialtyInformation": {
+                "PRV01_ProviderCode": "BI",
+                "PRV02_ReferenceIdentificationQualifier": "PXC",
+                "PRV03_ProviderTaxonomyCode": "251K00000X"
+              },
+              "2010AA_Loop": {
+                "NM1_BillingProviderName": {
+                  "NM101_EntityIdentifierCode": "85",
+                  "NM102_EntityTypeQualifier": "2",
+                  "NM103_BillingProviderLastOrOrganizationalName": invoice.attributes.provider_name withMaxSize 60,
+                  "NM108_IdentificationCodeQualifier": if((invoice.attributes.provider_npi startsWith ("1")) or (invoice.attributes.provider_npi startsWith ("2"))) "XX" else null,
+                  "NM109_BillingProviderIdentifier": if((invoice.attributes.provider_npi startsWith ("1")) or (invoice.attributes.provider_npi startsWith ("2"))) invoice.attributes.provider_npi else null
+                },
+                "N3_BillingProviderAddress": {
+                  "N301_BillingProviderAddressLine": invoice.attributes.provider_address_line_1 withMaxSize 55,
+                  "N302_BillingProviderAddressLine": invoice.attributes.provider_address_line_2 withMaxSize 55
+                },
+                "N4_BillingProviderCityStateZIPCode": {
+                  "N401_BillingProviderCityName": invoice.attributes.provider_address_city default invoice.attributes.provider_address_city withMaxSize 30,
+                  "N402_BillingProviderStateOrProvinceCode": invoice.attributes.provider_address_state,
+                  "N403_BillingProviderPostalZoneOrZIPCode": if(sizeOf(invoice.attributes.provider_address_postal_code) > 5) invoice.attributes.provider_address_postal_code else (invoice.attributes.provider_address_postal_code ++ "9999")
+                },
+                "REF_BillingProviderTaxIdentification": {
+                  "REF01_ReferenceIdentificationQualifier": "EI",
+                  "REF02_BillingProviderTaxIdentificationNumber": invoice.attributes.provider_tin
+                }
+              },
+              "2000B_Loop": [
+                {
+                  "HL_SubscriberHierarchy": {
+                    "HL01_HierarchicalID": "2",
+                    "HL02_HierarchicalParentID": "1",
+                    "HL03_HierarchicalLevelCode": "22",
+                    "HL04_HierarchicalChildCode": "0"
+                  },
+                  "SBR_SubscriberInformation": {
+                    "SBR01_PayerResponsibilitySequenceNumberCode": "P",
+                    "SBR02_IndividualRelationshipCode": "18",
+                    "SBR09_ClaimFilingIndicatorCode": "ZZ"
+                  },
+                  "2010BA_Loop": {
+                    "NM1_SubscriberName": {
+                      "NM101_EntityIdentifierCode": "IL",
+                      "NM102_EntityTypeQualifier": "1",
+                      "NM103_SubscriberLastName": invoice.attributes.client_last_name default "",
+                      "NM104_SubscriberFirstName": invoice.attributes.client_first_name default "",
+                      "NM105_SubscriberMiddleName": invoice.attributes.client_middle_name default "",
+                      "NM108_IdentificationCodeQualifier": if(not isEmpty(invoice.attributes.insurance_external_member_id)) "MI" else null,
+                      "NM109_SubscriberPrimaryIdentifier": invoice.attributes.insurance_external_member_id
+                    },
+                    "N3_SubscriberAddress": {
+                      "N301_SubscriberAddressLine": invoice.attributes.client_address_line_1 default "1234 No Address Found"
+                    },
+                    "N4_SubscriberCityStateZIPCode": {
+                      "N401_SubscriberCityName": invoice.attributes.client_address_city default "AnyTown",
+                      "N402_SubscriberStateCode": invoice.attributes.client_address_state default "NC",
+                      "N403_SubscriberPostalZoneOrZIPCode": invoice.attributes.client_address_postal_code default "27601"
+                    },
+                    ("DMG_SubscriberDemographicInformation": {
+                      "DMG01_DateTimePeriodFormatQualifier": "D8",
+                      "DMG02_SubscriberBirthDate": (invoice.attributes.client_dob as Date) as String{ format:"YYYYMMdd" },
+                      "DMG03_SubscriberGenderCode": upper((invoice.attributes.client_gender[0]))
+                    }) if render2010baDmg(invoice)
+                  },
+                  "2010BB_Loop": {
+                    "NM1_PayerName": {
+                      "NM101_EntityIdentifierCode": "PR",
+                      "NM102_EntityTypeQualifier": "2",
+                      "NM103_PayerName": invoice.attributes.payer_name,
+                      "NM108_IdentificationCodeQualifier": "PI",
+                      "NM109_PayerIdentifier": recipientConfig."2010BB_Loop"."NM1-09" default invoice.attributes.payer_external_id
+                    },
+                    ("REF_BillingProviderSecondaryIdentification": [
+                      {
+                        "REF01_ReferenceIdentificationQualifier": "G2",
+                        "REF02_BillingProviderSecondaryIdentifier": invoice.attributes.provider_npi
+                      }
+                    ]) if render2010bbRefG2(invoice)
+                  },
+                  "2300_Loop": [ {
+                    "CLM_ClaimInformation": {
+                      "CLM01_PatientControlNumber": invoice.attributes.short_id,
+                      "CLM02_TotalClaimChargeAmount": (invoice.attributes.total_amount_invoiced / 100) as String{ format:"#.00" } as Number,
+                      "CLM05_HealthCareServiceLocationInformation": {
+                        "CLM01_PlaceOfServiceCode": recipientConfig."2300_Loop"."CLM05-1" default invoice.attributes.place_of_service_code,
+                        "CLM02_FacilityCodeQualifier": "B",
+                        "CLM03_ClaimFrequencyCode": if(invoice.attributes.corrected == true) "7" else "1"
+                      },
+                      "CLM06_ProviderOrSupplierSignatureIndicator": "Y",
+                      "CLM07_AssignmentOrPlanParticipationCode": "A",
+                      "CLM08_BenefitsAssignmentCertificationIndicator": "Y",
+                      "CLM09_ReleaseOfInformationCode": "I"
+                    },
+                    ("DTP_DateInitialTreatmentDate": {
+                      "DTP01_DateTimeQualifier": "454",
+                      "DTP02_DateTimePeriodFormatQualifier": "D8",
+                      "DTP03_InitialTreatmentDate": (invoice.attributes.provided_service_starts_at as Date) as String{ format:"YYYYMMdd" }
+                    }) if render2300Dtp454(invoice),
+                    ("DTP_DateOnsetOfCurrentIllnessOrSymptom": {
+                      "DTP01_DateTimeQualifier": "431",
+                      "DTP02_DateTimePeriodFormatQualifier": "D8",
+                      "DTP03_OnsetOfCurrentIllnessOrInjuryDate": (invoice.attributes.submitted_to_network_lead_at as Date) as String{ format:"YYYYMMdd" }
+                    }) if render2300Dtp431(invoice),
+                    ("PWK_ClaimSupplementalInformation": [ {
+                        "PWK01_AttachmentReportTypeCode": "03",
+                        "PWK02_AttachmentTransmissionCode": "FT",
+                        "PWK05_SupplimentCodeQualifier": "AC",
+                        "PWK06_IdentififcationCode": invoice.attributes.short_id
+                    } ]) if render2300PwkAttachments(invoice),
+                    (recipientConfig."2300_Loop"."REF-01" map (item, index) -> {
+                      ("REF_PriorAuthorization": {
+                        "REF01_ReferenceIdentificationQualifier": "G1",
+                        "REF02_PriorAuthorizationNumber": getServiceAuthId(invoice)
+                      }) if ((item == "G1") and (getServiceAuthId(invoice) != null)),
+                      ("REF_AdjustedRepricedClaimNumber": {
+                        "REF01_ReferenceIdentificationQualifier": "9C",
+                        "REF02_AdjustedRepricedClaimReferenceNumber": invoice.attributes.previous_version_invoice_dispute_reason_display_name withMaxSize 50
+                      }) if ((item == "9C") and render2300Ref9C(invoice)),
+                      ("REF_InvestigationalDeviceExemptionNumber": {
+                        "REF01_ReferenceIdentificationQualifier": "LX",
+                        "REF02_InvestigationalDeviceExemptionIdentifier": invoice.attributes.last_transmitted_short_id
+                      }) if ((item == "LX") and render2300RefLX(invoice)),
+                      ("REF_MedicalRecordNumber": {
+                        "REF01_ReferenceIdentificationQualifier": "EA",
+                        "REF02_MedicalRecordNumber": invoice.attributes.original_version_short_id
+                      }) if ((item == "EA") and render2300RefEA(invoice)),
+                      ("REF_PayerClaimControlNumber": {
+                        "REF01_ReferenceIdentificationQualifier": "F8",
+                        "REF02_PayerClaimControlNumber": invoice.attributes.original_transmitted_short_id
+                      }) if ((item == "F8") and render2300RefF8(invoice)),
+                      ("REF_DemonstrationProjectIdentifier": {
+                        "REF01_ReferenceIdentificationQualifier": "P4",
+                        "REF02_DemonstrationProjectIdentifier": invoice.attributes.fee_schedule_program_name withMaxSize 50
+                      }) if ((item == "P4") and render2300RefP4(invoice))
+                    }),
+                    "HI_HealthCareDiagnosisCode": {
+                      (invoice.attributes.zcodes map ((item, index) -> {
+                        ((createHiTag(index)): {
+                          "HI01_DiagnosisTypeCode": if(index == 0) "ABK" else "ABF",
+                          "HI02_DiagnosisCode": item.attributes.code replace "." with ""
+                        })
+                      }))
+                    },
+                    "NTE_ClaimNote": {
+                      "NTE01_NoteReferenceCode": "TPO",
+                      "NTE02_ClaimNoteText": recipientConfig.note default buildNetworkLeadDetails(invoice)
+                    },
+                    "2310B_Loop": {
+                      "NM1_RenderingProviderName": {
+                        "NM101_EntityIdentifierCode": "82",
+                        "NM102_EntityTypeQualifier": "2",
+                        "NM103_RenderingProviderLastOrOrganizationName": recipientConfig."2310B_loop"."NM1-03" default invoice.attributes.provider_name,
+                        "NM108_IdentificationCodeQualifier": if ((invoice.attributes.provider_npi startsWith "1") or (invoice.attributes.provider_npi startsWith "2"))
+                          "XX" else null,
+                        "NM109_RenderingProviderIdentifier": if ((invoice.attributes.provider_npi startsWith "1") or (invoice.attributes.provider_npi startsWith "2"))
+                          invoice.attributes.provider_npi else null
+                      },
+                      "REF_ClaimIdentifierForTransmissionIntermediaries": {
+                        "REF01_ReferenceIdentificationQualifier": if ((invoice.attributes.provider_npi startsWith "3") or (invoice.attributes.provider_npi startsWith "4"))
+                          "G2" else null,
+                        "REF02_ReferenceIdentification": if ((invoice.attributes.provider_npi startsWith "3") or (invoice.attributes.provider_npi startsWith "4"))
+                          invoice.attributes.provider_npi else null
+                      }
+                    },
+                    "2400_Loop": flatten(invoice.attributes.procedure_codes) map (pcit, pci) -> {
+                      "LX_ServiceLineNumber": {
+                        "LX01_AssignedNumber": pci + 1
+                      },
+                      "SV1_ProfessionalService": ({
+                        "SV101_CompositeMedicalProcedureIdentifier": ({
+                          "SV101_ProductOrServiceIDQualifier": "HC",
+                          "SV107_Description": invoice.attributes.fee_schedule_program_external_code,
+                          "SV102_ProcedureCode": pcit.attributes.code,
+                        } ++ (
+                          {((pcit.relationships.procedure_code_modifiers.data map ((item, index) ->
+                            if(!(index > 4)) {
+                              ("SV" ++ (103 + index) ++ "_ProcedureModifier"):
+                                ((invoice.attributes.procedure_code_modifiers filter (invoice.id == item.id)).attributes.code)[0]
+                            } else {}
+                          )))}
+                        )),
+                        "SV102_LineItemChargeAmount": (invoice.attributes.total_amount_invoiced / 100) as String{ format:"#.00" } as Number,
+                        "SV103_UnitOrBasisForMeasurementCode": "UN",
+                        "SV104_ServiceUnitCount": (if(psPaidByUnit(invoice)) invoice.attributes.provided_service_unit_amount else "1") as Number,
+                        "SV107_CompositeDiagnosisCodePointer": {
+                          "SV101_DiagnosisCodePointer": 1
+                        }
+                      }),
+                      "DTP_DateServiceDate": {
+                        "DTP01_DateTimeQualifier": "472",
+                        "DTP02_DateTimePeriodFormatQualifier": "RD8",
+                        "DTP03_ServiceDate": psStartsAt(invoice) ++ "-" ++ defaultingPsEndsAt(invoice)
+                      },
+                      ("NTE_LineNote": {
+                        "NTE01_NoteReferenceCode": "ADD",
+                        "NTE02_LineNoteText": invoice.attributes.provided_service_metadata[0].value
+                      }) if invoice.attributes.provided_service_metadata[0].field == "service_description"
+                    }
+                  }]
+                }
+              ]
+            }
+          ]
+        },
+        "Summary": {}
+      }
+    }
+  }
+}
+============
+I want to rotate logs daily and keep 7 days history. which appender element typically used?
+========
+Input:
+[
+    {
+        "id": "1",
+        "name": "dev"
+    },
+    {
+        "id": "2",
+        "name": "test"
+    },
+    {
+        "id": "3",
+        "name": "uat"
+    },
+    {
+        "id": "4",
+        "name": "prod"
+    }
+]
+Output:
+{
+  "prod": "4",
+  "uat": "3",
+  "test": "2",
+  "dev": "1"
+}
+Solution:
+%dw 2.0
+output application/json
+---
+(payload map ((item, index) -> {
+    (item.name): (item.id)
+} )) reduce ((item, accumulator={}) -> (item ++ accumulator))
+
+======================
+Input:
+["abhi","bhim","cat","dog","enton","fom"]
+Output:
+{
+  "name": "abhi bhim cat dog enton fom"
+}
+Solution:
+%dw 2.0
+output application/json
+---
+{
+    "name": flatten(payload map ((item, index) -> item splitBy ",")) joinBy " "
+}
+==============
+Input:
+{
+"string":"12kwdwjjd j245fc"
+}
+Output:
+16
+Solution:
+%dw 2.0
+output application/json
+---
+payload.string reduce ((item, acc) -> (acc + 1))
+=========
+dw examples
+1. is it possible to write a cron expression for running the scheduler on the last working day of every month?
+0 0 0 LW * ? * 
+2. Has anyone worked on implementing logic for triggering scheduler to run on 2nd (or any other) business day of the month?
+
+hourly -> 0 0 1/1 * * ?
+hourly -> 0 0 * ? * *
+1.
+input
+ENV|10020191023001|ext100|714158|BRI006|X12|850S|PO||20191023|1229
+HDR|10020191023001|ext100|714158|20191023|20191028|20191028|BRI006WWI08750_080719||Crystal Thornberg|0|||||||111|1% 10 days, Net 11|10|10|1|USD|USA|EN||||0|BP1|DEL|
+HAD|10020191023001|ext100|714158|INV|USA|Renewal by Andersen Corporation|9900 Jamaica Avenue|||Cottage Grove, MN|55016|55016
+HAD|10020191023001|ext100|714158|DEL|USA|Renewal by Andersen||101 2nd Avenue South||Bayport, MN|55003-1058|55003
+LIN|10020191023001|ext100|714158|1|||BP|9053786|9053786|WW Rail/Stile, Wood, WH||106100.32|20191023|20191028||LIN|0.07|LIN|0||||111|0|1||0|0|||||||0
+LAD|10020191023001|ext100|714158|1|DEL|USA|Renewal by Andersen||101 2nd Avenue South||Bayport, MN|55003-1058|55003
+LIN|10020191023001|ext100|714158|2|||BP|9053794|9053794|WW Bottom Rail, Wood, WH||42200|20191023|20191028||LIN|0.081|LIN|0||||111|0|1||0|0|||||||0
+LAD|10020191023001|ext100|714158|2|DEL|USA|Renewal by Andersen||101 2nd Avenue South||Bayport, MN|55003-1058|55003
+PTX|10020191023001|ext100|714158|1
+
+DW exp:
+import * from dw::core::Strings
+output application/json
+fun getSegmetData(aString) = trim(aString) replace '\r\n' with '\n' splitBy("\n")
+fun getColumnValue(aString,row,position)= (trim(getSegmetData(aString)[row])  splitBy("|"))[position]
+fun getColumnValByToken(aString,token,position)= (( getSegmetData(aString) groupBy ( substringBefore ($,"|")))[token]) map  ($ splitBy("|"))[position]
+---
+((payload as String) replace "ENV" with("<BR>ENV") splitBy("<BR>") ) filter ($ != "")  map {
+ENV: getColumnValByToken($,"ENV",0)[0],
+ENV_column_1: getColumnValByToken($,"ENV",1)[0],
+ENV_column_2: getColumnValByToken($,"ENV",2)[0],
+ENV_column_3: getColumnValByToken($,"ENV",3)[0],
+ENV_column_4: getColumnValByToken($,"ENV",4)[0],
+ENV_column_5: getColumnValByToken($,"ENV",5)[0],
+ENV_column_6: getColumnValByToken($,"ENV",6)[0],
+ENV_column_7: getColumnValByToken($,"ENV",7)[0],
+ENV_column_8: getColumnValByToken($,"ENV",8)[0],
+ENV_column_9: getColumnValByToken($,"ENV",9)[0],
+ENV_column_10: getColumnValByToken($,"ENV",10)[0],
+HDR: getColumnValByToken($,"HDR",0)[0] ,
+HDR_Column_1: getColumnValByToken($,"HDR",1) map { HDR_column_sub_1: $},
+HDR_Column_2: getColumnValByToken($,"HDR",2) map { HDR_column_sub_2: $},
+HDR_Column_3: getColumnValByToken($,"HDR",3) map { HDR_column_sub_3: $},
+HDR_Column_4: getColumnValByToken($,"HDR",4) map { HDR_column_sub_4: $},
+HDR_Column_5: getColumnValByToken($,"HDR",5) map { HDR_column_sub_5: $},
+HDR_Column_6: getColumnValByToken($,"HDR",6) map { HDR_column_sub_6: $},
+HDR_Column_7: getColumnValByToken($,"HDR",7) map { HDR_column_sub_7: $},
+HDR_Column_8: getColumnValByToken($,"HDR",8) map { HDR_column_sub_8: $},
+HDR_Column_9: getColumnValByToken($,"HDR",9) map { HDR_column_sub_9: $},
+HDR_Column_10: getColumnValByToken($,"HDR",10) map { HDR_column_sub_10: $},
+HDR_Column_11: getColumnValByToken($,"HDR",11) map { HDR_column_sub_11: $},
+HDR_Column_12: getColumnValByToken($,"HDR",12) map { HDR_column_sub_12: $},
+HDR_Column_13: getColumnValByToken($,"HDR",13) map { HDR_column_sub_13: $},
+HDR_Column_14: getColumnValByToken($,"HDR",14) map { HDR_column_sub_14: $},
+HDR_Column_15: getColumnValByToken($,"HDR",15) map { HDR_column_sub_15: $},
+HDR_Column_16: getColumnValByToken($,"HDR",16) map { HDR_column_sub_16: $},
+HDR_Column_17: getColumnValByToken($,"HDR",17) map { HDR_column_sub_17: $},
+HDR_Column_18: getColumnValByToken($,"HDR",18) map { HDR_column_sub_18: $},
+HDR_Column_19: getColumnValByToken($,"HDR",19) map { HDR_column_sub_19: $},
+HDR_Column_20: getColumnValByToken($,"HDR",20) map { HDR_column_sub_20: $},
+HDR_Column_21: getColumnValByToken($,"HDR",21) map { HDR_column_sub_21: $},
+HDR_Column_22: getColumnValByToken($,"HDR",22) map { HDR_column_sub_22: $},
+HDR_Column_23: getColumnValByToken($,"HDR",23) map { HDR_column_sub_23: $},
+HDR_Column_24: getColumnValByToken($,"HDR",24) map { HDR_column_sub_24: $},
+HDR_Column_25: getColumnValByToken($,"HDR",25) map { HDR_column_sub_25: $},
+HDR_Column_26: getColumnValByToken($,"HDR",26) map { HDR_column_sub_26: $},
+HDR_Column_27: getColumnValByToken($,"HDR",27) map { HDR_column_sub_27: $},
+HDR_Column_28: getColumnValByToken($,"HDR",28) map { HDR_column_sub_28: $},
+HDR_Column_29: getColumnValByToken($,"HDR",29) map { HDR_column_sub_29: $},
+HDR_Column_30: getColumnValByToken($,"HDR",30) map { HDR_column_sub_30: $},
+HAD: getColumnValByToken($,"HAD",0)[0],
+HAD_Column_1: getColumnValByToken($,"HAD",1) map { HAD_column_sub_1: $},
+HAD_Column_2: getColumnValByToken($,"HAD",2) map { HAD_column_sub_2: $},
+HAD_Column_3: getColumnValByToken($,"HAD",3) map { HAD_column_sub_3: $},
+HAD_Column_4: getColumnValByToken($,"HAD",4) map { HAD_column_sub_4: $},
+HAD_Column_5: getColumnValByToken($,"HAD",5) map { HAD_column_sub_5: $},
+HAD_Column_6: getColumnValByToken($,"HAD",6) map { HAD_column_sub_6: $},
+HAD_Column_7: getColumnValByToken($,"HAD",7) map { HAD_column_sub_7: $},
+HAD_Column_8: getColumnValByToken($,"HAD",8) map { HAD_column_sub_8: $},
+HAD_Column_9: getColumnValByToken($,"HAD",9) map { HAD_column_sub_9: $},
+HAD_Column_10: getColumnValByToken($,"HAD",10) map { HAD_column_sub_10: $},
+HAD_Column_11: getColumnValByToken($,"HAD",11) map { HAD_column_sub_11: $},
+HAD_Column_12: getColumnValByToken($,"HAD",12) map { HAD_column_sub_12: $},
+LIN: getColumnValByToken($,"LIN",0)[0],
+LIN_Column_1: getColumnValByToken($,"LIN",1) map { LIN_column_sub_1: $},
+LIN_Column_2: getColumnValByToken($,"LIN",2) map { LIN_column_sub_2: $},
+LIN_Column_3: getColumnValByToken($,"LIN",3) map { LIN_column_sub_3: $},
+LIN_Column_4: getColumnValByToken($,"LIN",4) map { LIN_column_sub_4: $},
+LIN_Column_5: getColumnValByToken($,"LIN",5) map { LIN_column_sub_5: $},
+LIN_Column_6: getColumnValByToken($,"LIN",6) map { LIN_column_sub_6: $},
+LIN_Column_7: getColumnValByToken($,"LIN",7) map { LIN_column_sub_7: $},
+LIN_Column_8: getColumnValByToken($,"LIN",8) map { LIN_column_sub_8: $},
+LIN_Column_9: getColumnValByToken($,"LIN",9) map { LIN_column_sub_9: $},
+LIN_Column_10: getColumnValByToken($,"LIN",10) map { LIN_column_sub_10: $},
+LIN_Column_11: getColumnValByToken($,"LIN",11) map { LIN_column_sub_11: $},
+LIN_Column_12: getColumnValByToken($,"LIN",12) map { LIN_column_sub_12: $},
+LIN_Column_13: getColumnValByToken($,"LIN",13) map { LIN_column_sub_13: $},
+LIN_Column_14: getColumnValByToken($,"LIN",14) map { LIN_column_sub_14: $},
+LIN_Column_15: getColumnValByToken($,"LIN",15) map { LIN_column_sub_15: $},
+LIN_Column_16: getColumnValByToken($,"LIN",16) map { LIN_column_sub_16: $},
+LIN_Column_17: getColumnValByToken($,"LIN",17) map { LIN_column_sub_17: $},
+LIN_Column_18: getColumnValByToken($,"LIN",18) map { LIN_column_sub_18: $},
+LIN_Column_19: getColumnValByToken($,"LIN",19) map { LIN_column_sub_19: $},
+LIN_Column_20: getColumnValByToken($,"LIN",20) map { LIN_column_sub_20: $},
+LIN_Column_21: getColumnValByToken($,"LIN",21) map { LIN_column_sub_21: $},
+LIN_Column_22: getColumnValByToken($,"LIN",22) map { LIN_column_sub_22: $},
+LIN_Column_23: getColumnValByToken($,"LIN",23) map { LIN_column_sub_23: $},
+LIN_Column_24: getColumnValByToken($,"LIN",24) map { LIN_column_sub_24: $},
+LIN_Column_25: getColumnValByToken($,"LIN",25) map { LIN_column_sub_25: $},
+LIN_Column_26: getColumnValByToken($,"LIN",26) map { LIN_column_sub_26: $},
+LIN_Column_27: getColumnValByToken($,"LIN",27) map { LIN_column_sub_27: $},
+LIN_Column_28: getColumnValByToken($,"LIN",28) map { LIN_column_sub_28: $},
+LIN_Column_29: getColumnValByToken($,"LIN",29) map { LIN_column_sub_29: $},
+LIN_Column_30: getColumnValByToken($,"LIN",30) map { LIN_column_sub_30: $},
+LIN_Column_31: getColumnValByToken($,"LIN",31) map { LIN_column_sub_31: $},
+LIN_Column_32: getColumnValByToken($,"LIN",32) map { LIN_column_sub_32: $},
+LIN_Column_33: getColumnValByToken($,"LIN",33) map { LIN_column_sub_33: $},
+LIN_Column_34: getColumnValByToken($,"LIN",34) map { LIN_column_sub_34: $},
+LIN_Column_35: getColumnValByToken($,"LIN",35) map { LIN_column_sub_35: $},
+LAD: getColumnValByToken($,"LAD",0)[0],
+LAD_Column_1: getColumnValByToken($,"LAD",1) map { LAD_column_sub_1: $},
+LAD_Column_2: getColumnValByToken($,"LAD",2) map { LAD_column_sub_2: $},
+LAD_Column_3: getColumnValByToken($,"LAD",3) map { LAD_column_sub_3: $},
+LAD_Column_4: getColumnValByToken($,"LAD",4) map { LAD_column_sub_4: $},
+LAD_Column_5: getColumnValByToken($,"LAD",5) map { LAD_column_sub_5: $},
+LAD_Column_6: getColumnValByToken($,"LAD",6) map { LAD_column_sub_6: $},
+LAD_Column_7: getColumnValByToken($,"LAD",7) map { LAD_column_sub_7: $},
+LAD_Column_8: getColumnValByToken($,"LAD",8) map { LAD_column_sub_8: $},
+LAD_Column_9: getColumnValByToken($,"LAD",9) map { LAD_column_sub_9: $},
+LAD_Column_10: getColumnValByToken($,"LAD",10) map { LAD_column_sub_10: $},
+LAD_Column_11: getColumnValByToken($,"LAD",11) map { LAD_column_sub_11: $},
+LAD_Column_12: getColumnValByToken($,"LAD",12) map { LAD_column_sub_12: $},
+LAD_Column_13: getColumnValByToken($,"LAD",13) map { LAD_column_sub_13: $},
+PTX: getColumnValByToken($,"PTX",0)[0],
+PTX_Column_1: getColumnValByToken($,"PTX",1) map { PTX_column_sub_1: $},
+PTX_Column_2: getColumnValByToken($,"PTX",2) map { PTX_column_sub_2: $},
+PTX_Column_3: getColumnValByToken($,"PTX",3) map { PTX_column_sub_3: $},
+PTX_Column_4: getColumnValByToken($,"PTX",4) map { PTX_column_sub_4: $},
+}
+
+=====================================
+2.
+
+=================
+%dw 2.0
+output application/json
+
+var cash = {
+  "GetCashPriceResponse": {
+    "GetCashPriceResult": {
+      "AccountNumberUsed": "654563",
+      "InformationMessages": {
+        "string": [
+          "Ran actions for rule 'AverageForWWW-168 version 1  Rule: 'OriginatingSystem' Equal 'WWW'. Rule Actions:  Changing DiscountPercent to 1.00.",
+          "Ran actions for rule 'CashPricingAreaCostMarkup_0-382653363 version 1  Rule: 'TradeArea' NotEqual 'ALL'. Rule Actions:  Changing DiscountAmt to 160. Changing DiscountPercent to 0.",
+          "Ran actions for rule 'AverageForWWW-168 version 1  Rule: 'OriginatingSystem' Equal 'WWW'. Rule Actions:  Changing DiscountPercent to 1.00.",
+          "Ran actions for rule 'CashPricing995Rule_2-22645 version 6  Rule: 'PricingType' NotEqual '0' AND 'ParentNumber' NotEqual '227157'. Rule Actions:  Changing DiscountPercent to 9.00."
+        ]
+      },
+      "PartDetails": {
+        "PartInformation": [
+          {
+            "Average": {
+              "DiscountAmount": 75.2,
+              "ExtendedPrice": 75.2,
+              "LaborAmount": 75.2,
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": 75.2,
+              "SellingPrice": 75.2
+            },
+            "BottomInShop": {
+              "DiscountAmount": 10,
+              "ExtendedPrice": 10,
+              "LaborAmount": 10,
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": 10,
+              "SellingPrice": 10
+            },
+            "BottomMobile": {
+              "DiscountAmount": 10,
+              "ExtendedPrice": 10,
+              "LaborAmount": 10,
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": 10,
+              "SellingPrice": 10
+            },
+            "Initial": {
+              "DiscountAmount": 19,
+              "ExtendedPrice": 19,
+              "LaborAmount": 19,
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": 19,
+              "SellingPrice": 19
+            },
+            "ListPrice": "362.37",
+            "Minimum": {
+              "DiscountAmount": 10,
+              "ExtendedPrice": 10,
+              "LaborAmount": 10,
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": 10,
+              "SellingPrice": "289.99"
+            },
+            "PartCost": "140.5",
+            "PartNumber": "AJB400",
+            "PartPriceType": "CashPriceDiscount",
+            "StoreQuantity": "0",
+            "WarehouseQuantity": "0",
+            "InformationMessages": {
+              "string": [
+                "Priced 'DW01728 GTNOEM' with price discount from table 4029.",
+                "Ran actions for rule 'CashPricingMakeModelYearTradeArea_107-382716940 version 3527  Rule: 'Year' Equal '2008' AND 'PartType' NotEqual 'REPAIR'. Rule Actions:  Changing DiscountPercent to 0. Changing DiscountAmt to -10."
+              ]
+            }
+          },
+          {
+            "Average": {
+              "DiscountAmount": "100.00",
+              "ExtendedPrice": "17.99",
+              "LaborAmount": "17.99",
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": "1.00",
+              "SellingPrice": "0.00"
+            },
+            "BottomInShop": {
+              "DiscountAmount": "100.00",
+              "ExtendedPrice": "17.99",
+              "LaborAmount": "17.99",
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": "1.00",
+              "SellingPrice": "0.00"
+            },
+            "BottomMobile": {
+              "DiscountAmount": "100.00",
+              "ExtendedPrice": "17.99",
+              "LaborAmount": "17.99",
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": "1.00",
+              "SellingPrice": "0.00"
+            },
+            "Initial": {
+              "DiscountAmount": "100.00",
+              "ExtendedPrice": "17.99",
+              "LaborAmount": "17.99",
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": "1.00",
+              "SellingPrice": "0.00"
+            },
+            "ListPrice": "4.99",
+            "Minimum": {
+              "DiscountAmount": "100.00",
+              "ExtendedPrice": "17.99",
+              "LaborAmount": "17.99",
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": "1.00",
+              "SellingPrice": "0.00"
+            },
+            "PartCost": "0.00",
+            "PartNumber": "AJB401",
+            "PartPriceType": "CashFlat",
+            "StoreQuantity": "0",
+            "WarehouseQuantity": "0",
+            "InformationMessages": {
+              "string": [
+                "Priced 'DISPOSAL FEE' with national flat price."
+              ]
+            }
+          },
+          {
+            "Average": {
+              "DiscountAmount": "100.00",
+              "ExtendedPrice": "34.99",
+              "LaborAmount": "34.99",
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": "1.00",
+              "SellingPrice": "0.00"
+            },
+            "BottomInShop": {
+              "DiscountAmount": "100.00",
+              "ExtendedPrice": "34.99",
+              "LaborAmount": "34.99",
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": "1.00",
+              "SellingPrice": "0.00"
+            },
+            "BottomMobile": {
+              "DiscountAmount": "100.00",
+              "ExtendedPrice": "34.99",
+              "LaborAmount": "34.99",
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": "1.00",
+              "SellingPrice": "0.00"
+            },
+            "Initial": {
+              "DiscountAmount": "100.00",
+              "ExtendedPrice": "34.99",
+              "LaborAmount": "34.99",
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": "1.00",
+              "SellingPrice": "0.00"
+            },
+            "ListPrice": "24.99",
+            "Minimum": {
+              "DiscountAmount": "100.00",
+              "ExtendedPrice": "34.99",
+              "LaborAmount": "34.99",
+              "LaborTax": "0",
+              "MaterialTax": "0",
+              "PercentDiscount": "1.00",
+              "SellingPrice": "0.00"
+            },
+            "PartCost": "0.00",
+            "PartNumber": "MOBILE FEE",
+            "PartPriceType": "CashFlat",
+            "StoreQuantity": "0",
+            "WarehouseQuantity": "0",
+            "InformationMessages": {
+              "string": [
+                "Priced 'MOBILE FEE' with national flat price."
+              ]
+            }
+          }
+        ]
+      },
+      "TotalOrderCost": "300.5000",
+      "ZipCodeUsed": "34785"
+    }
+  }
+}
+var cashPriceRes = {
+    "GetCashPriceResponse": {
+        "GetCashPriceResult": {
+            "AccountNumberUsed": "654563",
+            "InformationMessages": {
+                "string": [
+                    "Ran actions for rule 'AverageForWWW-168 version 1  Rule: 'OriginatingSystem' Equal 'WWW'. Rule Actions:  Changing DiscountPercent to 1.00.",
+                    "Ran actions for rule 'CashPricingAreaCostMarkup_0-382653363 version 1  Rule: 'TradeArea' NotEqual 'ALL'. Rule Actions:  Changing DiscountAmt to 160. Changing DiscountPercent to 0.",
+                    "Ran actions for rule 'AverageForWWW-168 version 1  Rule: 'OriginatingSystem' Equal 'WWW'. Rule Actions:  Changing DiscountPercent to 1.00.",
+                    "Ran actions for rule 'CashPricing995Rule_2-22645 version 6  Rule: 'PricingType' NotEqual '0' AND 'ParentNumber' NotEqual '227157'. Rule Actions:  Changing DiscountPercent to 9.00."
+                ]
+            },
+            "PartDetails": {
+                "PartInformation": [
+                    {
+                        "Average": {
+                            "DiscountAmount": "17.21",
+                            "ExtendedPrice": "359.99",
+                            "LaborAmount": "60.00",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "0.172144493197560504456770704",
+                            "SellingPrice": "299.99"
+                        },
+                        "BottomInShop": {
+                            "DiscountAmount": "19.97",
+                            "ExtendedPrice": "349.99",
+                            "LaborAmount": "60.00",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "0.1997405966277561608300907912",
+                            "SellingPrice": "289.99"
+                        },
+                        "BottomMobile": {
+                            "DiscountAmount": "19.97",
+                            "ExtendedPrice": "349.99",
+                            "LaborAmount": "60.00",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "0.1997405966277561608300907912",
+                            "SellingPrice": "289.99"
+                        },
+                        "Initial": {
+                            "DiscountAmount": "17.21",
+                            "ExtendedPrice": "359.99",
+                            "LaborAmount": "60.00",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "0.172144493197560504456770704",
+                            "SellingPrice": "299.99"
+                        },
+                        "ListPrice": "362.37",
+                        "Minimum": {
+                            "DiscountAmount": "19.97",
+                            "ExtendedPrice": "349.99",
+                            "LaborAmount": "60.00",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "0.1997405966277561608300907912",
+                            "SellingPrice": "289.99"
+                        },
+                        "PartCost": "140.5",
+                        "PartNumber": "AJB400",
+                        "PartPriceType": "CashPriceDiscount",
+                        "StoreQuantity": "0",
+                        "WarehouseQuantity": "0",
+                        "InformationMessages": {
+                            "string": [
+                                "Priced 'DW01728 GTNOEM' with price discount from table 4029.",
+                                "Ran actions for rule 'CashPricingMakeModelYearTradeArea_107-382716940 version 3527  Rule: 'Year' Equal '2008' AND 'PartType' NotEqual 'REPAIR'. Rule Actions:  Changing DiscountPercent to 0. Changing DiscountAmt to -10."
+                            ]
+                        }
+                    },
+                    {
+                        "Average": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "17.99",
+                            "LaborAmount": "17.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "BottomInShop": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "17.99",
+                            "LaborAmount": "17.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "BottomMobile": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "17.99",
+                            "LaborAmount": "17.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "Initial": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "17.99",
+                            "LaborAmount": "17.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "ListPrice": "4.99",
+                        "Minimum": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "17.99",
+                            "LaborAmount": "17.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "PartCost": "0.00",
+                        "PartNumber": "AJB401",
+                        "PartPriceType": "CashFlat",
+                        "StoreQuantity": "0",
+                        "WarehouseQuantity": "0",
+                        "InformationMessages": {
+                            "string": [
+                                "Priced 'DISPOSAL FEE' with national flat price."
+                            ]
+                        }
+                    },
+                    {
+                        "Average": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "34.99",
+                            "LaborAmount": "34.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "BottomInShop": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "34.99",
+                            "LaborAmount": "34.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "BottomMobile": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "34.99",
+                            "LaborAmount": "34.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "Initial": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "34.99",
+                            "LaborAmount": "34.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "ListPrice": "24.99",
+                        "Minimum": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "34.99",
+                            "LaborAmount": "34.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "PartCost": "0.00",
+                        "PartNumber": "MOBILE FEE",
+                        "PartPriceType": "CashFlat",
+                        "StoreQuantity": "0",
+                        "WarehouseQuantity": "0",
+                        "InformationMessages": {
+                            "string": [
+                                "Priced 'MOBILE FEE' with national flat price."
+                            ]
+                        }
+                    }
+                ]
+            },
+            "TotalOrderCost": "300.5000",
+            "ZipCodeUsed": "34785"
+        }
+    }
+}
+var info= cashPriceRes.PartDetails.PartInformation.InformationMessages.string
+var payloadData= {
+  "GetCashPrice": {
+    "cashPriceRequest": {
+      "JobType": "Repair",
+      "AccountNumber": "654563",
+      "CtuNumber": "01833",
+      "OriginatingSystem": "WWW",
+      "PartNumbers": {
+        "string": [
+        "DW01728 GTNOEM",
+        "DISPOSAL FEE",
+        "MOBILE FEE"
+        ]
+      },
+      "PromotionalCode": null,
+      "TestString": null,
+      "VehicleInfo": {
+        "GlassMateVehicleID": "CR00058965",
+        "Make": "DODGE",
+        "Model": "PICKUP 1500",
+        "Year": "2008"
+      },
+      "ZipCode": "34785",
+      "CalculateTaxFlag": "false",
+      "IncludeTaxInPriceFlag": "false",
+      "TaxShipFromAddress": null,
+      "TaxShipToAddress": null,
+      "Metadata": {
+        "Channel": null,
+        "EON": "S169140586",
+        "MetadataExtension": null,
+        "ParentCorrelation": null,
+        "ReferralNumber": null,
+        "ReferralSequenceNumber": null,
+        "WorkOrderId": null
+      },
+      "Attribution_Campaign": "not set",
+      "Attribution_Channel": "Direct",
+      "Attribution_Content": "not set",
+      "Attribution_Medium": "none",
+      "Attribution_Source": "direct",
+      "Attribution_Term": "not set",
+      "Device_Browser_Name": "Chrome",
+      "Device_Browser_Version": "89.0",
+      "Device_Model": "Android Phone",
+      "Device_OS_Name": "Android",
+      "Device_OS_Version_Number": "10",
+      "Device_OS_Windows_Version": "Unknown",
+      "Device_Screen_Resolution": "360 x 740",
+      "Device_Type": "Mobile",
+      "Is_Email_Captured": "false",
+      "Is_VIN_Captured": "false",
+      "Seconds_To_First_Quote": "212"
+    }
+  }
+}
+
+var capacityResponse= { "GetMarketCapacityDetailResult": {
+        "StoreNumber": "12213",
+        "InstallCapacityTaken": "12213",
+        "RepairCapacityTaken": "12213",
+        "StoreOpenCapacityReplace": "12213",
+        "StoreOpenCapacityRepair": "12213",
+        "StoreTotalCapacityReplace": "12213",
+        "StoreTotalCapacityRepair": "12213",
+        "StatusCode": 200,
+"ErrorMessage": null}
+    }
+var PricingSystem = cashPriceRes.GetCashPriceResponse
+var data = payloadData.GetCashPrice.cashPriceRequest
+fun mapObjectPayload(payload)=(
+    payload mapObject ((currentValue, currentKey, index) ->
+        (
+             if(currentValue is Object)
+            (   if(currentKey as String == "InformationMessages")
+                    (currentKey): flatten(info)
+                else
+                    (currentKey):mapObjectPayload(currentValue)
+            )
+            else
+                ((currentKey): currentValue) if((currentKey as String != "JobType"))
+        )
+    )
+)
+fun mapObjectPayl(payload)=(
+    payload mapObject ((currentValue, currentKey, index) ->
+        (
+            if(currentValue is Object)
+            (   if(currentKey as String  == "PartNumbers")
+                    (currentKey): data.PartNumbers.string
+                else
+                    (currentKey):mapObjectPayload(currentValue)
+            )
+            else
+                ((currentKey): currentValue) if((currentKey as String != "JobType"))
+        )
+    )
+)
+fun mapArrayPayload(payload)=(
+    payload map(currentRecord, index)->{
+        (if(currentRecord is Object) mapObjectPayload(currentRecord)
+            else currentRecord
+        )
+    }
+)
+
+---
+{
+	"EON": data.Metadata.EON,
+	"CallDateTime": now() as String  {format: "yyyy-MM-dd'T'HH:mm:ss"},
+	"Timestamp": now() as String  {format: "yyyy-MM-dd'T'HH:mm:ss:SSS"},
+	"CashPriceRequest": mapObjectPayl(data),
+    "CashPriceResponse": {
+        "ZipCodeUsed": cashPriceRes.ZipCodeUsed,
+		"AccountNumberUsed": cashPriceRes.AccountNumberUsed,
+		"TotalOrderCost": cashPriceRes.TotalOrderCost,
+		"PricingSystem" : "Vendavo",
+        "PartDetails":  mapArrayPayload(flatten(cashPriceRes..PartDetails[0].*PartInformation)),
+        "InformationMessages": cashPriceRes.InformationMessages.string,
+        "DayOfCall" : capacityResponse.GetMarketCapacityDetailResult.StoreNumber,
+        "StoreOpenCapacityRepair" : capacityResponse.GetMarketCapacityDetailResult.StoreOpenCapacityRepair,
+        "StoreTotalCapacityRepair" : capacityResponse.GetMarketCapacityDetailResult.StoreTotalCapacityRepair,
+        "StoreOpenCapacityReplace" : capacityResponse.GetMarketCapacityDetailResult.StoreOpenCapacityReplace,
+		"StoreTotalCapacityReplace" : capacityResponse.GetMarketCapacityDetailResult.StoreTotalCapacityReplace,
+        "AptRateCategory" : "",
+		"AptRateScore" : "",
+        "AptRateRank" :"",
+        "AptRateSegmentAvg" : "",
+        "OpenCapacityPctRank" : "",
+        "OpenCapacityCategory" : "",
+        "OpenCapacityScore" : "",
+        "SegmentQT" : ""    
+
+    
+    }
+}
+================================
+input
+{
+    "Parts": [
+    {
+      "PartNumber": "WSREPAIR"
+    },
+    {
+      "PartNumber": "WSREPAIR"
+    },
+    {
+      "PartNumber": "DISPOSAL FEE"
+    },
+    {
+      "PartNumber": "WSREPAIR"
+    },
+    {
+      "PartNumber": "MWSREPAIR"
+    },
+    {
+      "PartNumber": "MOBILE FEE"
+    },
+    {
+      "PartNumber": "WSREPAIR"
+    },
+    {
+      "PartNumber": "MWSREPAIR"
+    }
+  ]
+}
+}
+-------------------------
+
+output
+{
+	{
+  "Parts": [
+    {
+      "PartNumber": "WSREPAIR"
+    },
+    {
+      "PartNumber": "WSREPAIR-2"
+    },
+    {
+      "PartNumber": "DISPOSAL FEE"
+    },
+    {
+      "PartNumber": "WSREPAIR-3"
+    },
+    {
+      "PartNumber": "MWSREPAIR"
+    },
+    {
+      "PartNumber": "MOBILE FEE"
+    },
+    {
+      "PartNumber": "WSREPAIR-4"
+    },
+    {
+      "PartNumber": "MWSREPAIR-2"
+    }
+  ]
+}
+}
+
+sapi-equifax
+staging -> dev and qa
+work with greg
+============
+[
+  {
+    "P_FROM_DATE|P_TO_DATE|CUSTOMER_ORGANIZATION_NAME|ACCOUNT_NUMBER|SITE_NUMBER|SITE_NAME|ADDRESS_LINE_1|ADDRESS_LINE_2|CITY|STATE|POSTAL_CODE|COUNTRY|ADDRESS_PURPOSE|SITE|CUSTOMER_ID|PARTY_SITE_ID|LOCATION_ID|DESTINATION_FULLFILLMENT_CENTER_ID": "14/12/2020|03/09/2021|ORDERS|11111|22222||\"ssdddff\"||ABC|PO|112233|AB|SHIP_TO|24|3000|30000|300113|QWE"
+  },
+  {
+    "P_FROM_DATE|P_TO_DATE|CUSTOMER_ORGANIZATION_NAME|ACCOUNT_NUMBER|SITE_NUMBER|SITE_NAME|ADDRESS_LINE_1|ADDRESS_LINE_2|CITY|STATE|POSTAL_CODE|COUNTRY|ADDRESS_PURPOSE|SITE|CUSTOMER_ID|PARTY_SITE_ID|LOCATION_ID|DESTINATION_FULLFILLMENT_CENTER_ID": "14/12/2020|03/09/2021|ORDERS|208|1737||\"qwwerr\"||\"City\"|AV|945|QW|SHIP_TO|313|3000000411|303407|30005|"
+  }
+]
+
+https://docs.mulesoft.com/mule-runtime/4.3/dataweave-cookbook-change-time-zone
+https://docs.mulesoft.com/mule-runtime/4.3/dataweave-cookbook-format-dates
+https://docs.mulesoft.com/mule-runtime/4.3/dataweave-types#dw_type_dates
+https://docs.mulesoft.com/mule-runtime/4.3/dataweave-cookbook-parse-dates
+
+---------------
+mule.zone 
+
+https://repository.mulesoft.org/nexus/content/repositories/public/com
+/mulesoft/security/mule-module-security-property-placeholder
+
+}
+--------------
+
+input:
+{
+    "GetCashPriceResponse": {
+        "GetCashPriceResult": {
+            "AccountNumberUsed": "654563",
+            "InformationMessages": {
+                "string": [
+                    "Ran actions for rule 'AverageForWWW-168 version 1  Rule: 'OriginatingSystem' Equal 'WWW'. Rule Actions:  Changing DiscountPercent to 1.00.",
+                    "Ran actions for rule 'CashPricingAreaCostMarkup_0-382653363 version 1  Rule: 'TradeArea' NotEqual 'ALL'. Rule Actions:  Changing DiscountAmt to 160. Changing DiscountPercent to 0.",
+                    "Ran actions for rule 'AverageForWWW-168 version 1  Rule: 'OriginatingSystem' Equal 'WWW'. Rule Actions:  Changing DiscountPercent to 1.00.",
+                    "Ran actions for rule 'CashPricing995Rule_2-22645 version 6  Rule: 'PricingType' NotEqual '0' AND 'ParentNumber' NotEqual '227157'. Rule Actions:  Changing DiscountPercent to 9.00."
+                ]
+            },
+            "PartDetails": {
+                "PartInformation": [
+                    {
+                        "Average": {
+                            "DiscountAmount": "17.21",
+                            "ExtendedPrice": "359.99",
+                            "LaborAmount": "60.00",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "0.172144493197560504456770704",
+                            "SellingPrice": "299.99"
+                        },
+                        "BottomInShop": {
+                            "DiscountAmount": "19.97",
+                            "ExtendedPrice": "349.99",
+                            "LaborAmount": "60.00",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "0.1997405966277561608300907912",
+                            "SellingPrice": "289.99"
+                        },
+                        "BottomMobile": {
+                            "DiscountAmount": "19.97",
+                            "ExtendedPrice": "349.99",
+                            "LaborAmount": "60.00",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "0.1997405966277561608300907912",
+                            "SellingPrice": "289.99"
+                        },
+                        "Initial": {
+                            "DiscountAmount": "17.21",
+                            "ExtendedPrice": "359.99",
+                            "LaborAmount": "60.00",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "0.172144493197560504456770704",
+                            "SellingPrice": "299.99"
+                        },
+                        "ListPrice": "362.37",
+                        "Minimum": {
+                            "DiscountAmount": "19.97",
+                            "ExtendedPrice": "349.99",
+                            "LaborAmount": "60.00",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "0.1997405966277561608300907912",
+                            "SellingPrice": "289.99"
+                        },
+                        "PartCost": "140.5",
+                        "PartNumber": "AJB400",
+                        "PartPriceType": "CashPriceDiscount",
+                        "StoreQuantity": "0",
+                        "WarehouseQuantity": "0",
+                        "InformationMessages": {
+                            "string": [
+                                "Priced 'DW01728 GTNOEM' with price discount from table 4029.",
+                                "Ran actions for rule 'CashPricingMakeModelYearTradeArea_107-382716940 version 3527  Rule: 'Year' Equal '2008' AND 'PartType' NotEqual 'REPAIR'. Rule Actions:  Changing DiscountPercent to 0. Changing DiscountAmt to -10."
+                            ]
+                        }
+                    },
+                    {
+                        "Average": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "17.99",
+                            "LaborAmount": "17.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "BottomInShop": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "17.99",
+                            "LaborAmount": "17.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "BottomMobile": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "17.99",
+                            "LaborAmount": "17.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "Initial": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "17.99",
+                            "LaborAmount": "17.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "ListPrice": "4.99",
+                        "Minimum": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "17.99",
+                            "LaborAmount": "17.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "PartCost": "0.00",
+                        "PartNumber": "AJB401",
+                        "PartPriceType": "CashFlat",
+                        "StoreQuantity": "0",
+                        "WarehouseQuantity": "0",
+                        "InformationMessages": {
+                            "string": [
+                                "Priced 'DISPOSAL FEE' with national flat price."
+                            ]
+                        }
+                    },
+                    {
+                        "Average": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "34.99",
+                            "LaborAmount": "34.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "BottomInShop": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "34.99",
+                            "LaborAmount": "34.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "BottomMobile": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "34.99",
+                            "LaborAmount": "34.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "Initial": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "34.99",
+                            "LaborAmount": "34.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "ListPrice": "24.99",
+                        "Minimum": {
+                            "DiscountAmount": "100.00",
+                            "ExtendedPrice": "34.99",
+                            "LaborAmount": "34.99",
+                            "LaborTax": "0",
+                            "MaterialTax": "0",
+                            "PercentDiscount": "1.00",
+                            "SellingPrice": "0.00"
+                        },
+                        "PartCost": "0.00",
+                        "PartNumber": "MOBILE FEE",
+                        "PartPriceType": "CashFlat",
+                        "StoreQuantity": "0",
+                        "WarehouseQuantity": "0",
+                        "InformationMessages": {
+                            "string": [
+                                "Priced 'MOBILE FEE' with national flat price."
+                            ]
+                        }
+                    }
+                ]
+            },
+            "TotalOrderCost": "300.5000",
+            "ZipCodeUsed": "34785"
+        }
+    }
+}
+
+%dw 2.0
+output application/json
+var partResp ={
+    "Header": {
+        "CustomerNumber": "001BRM01",
+        "ZipCode": "43110",
+        "TotalOrderCost": 450,
+        "Currency": "USD"
+    },
+    "Parts":
+        {
+            "id": "id-1",
+            "PartNumber": "AJB401",
+            "ListPrice": 250,
+            "PartCost": 200,
+            "DiscountAmount": 100,
+            "DiscountPercent": 10,
+            "ExtendedPriceWLabor": 75.2,
+            "LaborAmount": 120,
+            "FloorPrice": 10,
+            "TargetPrice": 75.2,
+            "StretchPrice": 19,
+            "PriceType": "CashFlat",
+            "AptRateCategory": "Rate 1",
+            "AptRateScore": 120,
+            "AptRateRank": 3,
+            "AptRateSegmentAvg": 20,
+            "OpenCapacityPctRank": 5,
+            "OpenCapacityCategory": 13,
+            "OpenCapacityScore": 24,
+            "SegmentQT": "S-124",
+            "Error": "",
+            "Warning": ""
+        }
+}
+var partResponse = partResp.Parts
+fun updateValue(data)=(data map(user)->(
+    if(user.PartNumber contains(partResponse.PartNumber)) user  update {
+            case Average at .Average.DiscountAmount ->  partResponse.TargetPrice
+            case Average at .Average.ExtendedPrice ->  partResponse.TargetPrice
+            case Average at .Average.LaborAmount ->  partResponse.TargetPrice
+            case Average at .Average.PercentDiscount ->  partResponse.TargetPrice
+            case Average at .Average.SellingPrice ->  partResponse.TargetPrice
+            case BottomInShop at .BottomInShop.DiscountAmount ->  partResponse.FloorPrice
+            case BottomInShop at .BottomInShop.ExtendedPrice ->  partResponse.FloorPrice
+            case BottomInShop at .BottomInShop.LaborAmount ->  partResponse.FloorPrice
+            case BottomInShop at .BottomInShop.PercentDiscount ->  partResponse.FloorPrice
+            case BottomInShop at .BottomInShop.SellingPrice ->  partResponse.FloorPrice
+            case BottomMobile at .BottomMobile.DiscountAmount ->  partResponse.FloorPrice
+            case BottomMobile at .BottomMobile.ExtendedPrice ->  partResponse.FloorPrice
+            case BottomMobile at .BottomMobile.LaborAmount ->  partResponse.FloorPrice
+            case BottomMobile at .BottomMobile.PercentDiscount ->  partResponse.FloorPrice
+            case BottomMobile at .BottomMobile.SellingPrice ->  partResponse.FloorPrice
+            case Initial at .Initial.DiscountAmount ->  partResponse.StretchPrice
+            case Initial at .Initial.ExtendedPrice ->  partResponse.StretchPrice
+            case Initial at .Initial.LaborAmount ->  partResponse.StretchPrice
+            case Initial at .Initial.PercentDiscount ->  partResponse.StretchPrice
+            case Initial at .Initial.SellingPrice ->  partResponse.StretchPrice
+            case Minimum at .Minimum.DiscountAmount ->  partResponse.FloorPrice
+            case Minimum at .Minimum.ExtendedPrice ->  partResponse.FloorPrice
+            case Minimum at .Minimum.LaborAmount ->  partResponse.FloorPrice
+            case Minimum at .Minimum.PercentDiscount ->  partResponse.FloorPrice
+            case Average at .Average.SellingPrice ->  partResponse.FloorPrice
+    }
+    else user
+))
+var info =payload.GetCashPriceResponse.GetCashPriceResult.PartDetails.PartInformation
+fun newPayload(payload)=payload  update {
+        case GetCashPriceResponse at .GetCashPriceResponse.GetCashPriceResult.PartDetails.PartInformation->  updateValue(info)
+}
+---
+newPayload(payload)
+
+
+===================================
+working expression by satyam 
+%dw 2.0
+output application/json
+var partResp ={
+    "Header": {
+        "CustomerNumber": "001BRM01",
+        "ZipCode": "43110",
+        "TotalOrderCost": 450,
+        "Currency": "USD"
+    },
+    "Parts":
+        [{
+            "id": "id-1",
+            "PartNumber": "AJB400",
+            "ListPrice": 250,
+            "PartCost": 200,
+            "DiscountAmount": 100,
+            "DiscountPercent": 10,
+            "ExtendedPriceWLabor": 75.2,
+            "LaborAmount": 120,
+            "FloorPrice": 10,
+            "TargetPrice": 65.2,
+            "StretchPrice": 19,
+            "PriceType": "CashFlat",
+            "AptRateCategory": "Rate 1",
+            "AptRateScore": 120,
+            "AptRateRank": 3,
+            "AptRateSegmentAvg": 20,
+            "OpenCapacityPctRank": 5,
+            "OpenCapacityCategory": 13,
+            "OpenCapacityScore": 24,
+            "SegmentQT": "S-124",
+            "Error": "",
+            "Warning": ""
+        },{
+            "id": "id-1",
+            "PartNumber": "AJB401",
+            "ListPrice": 250,
+            "PartCost": 200,
+            "DiscountAmount": 100,
+            "DiscountPercent": 10,
+            "ExtendedPriceWLabor": 75.2,
+            "LaborAmount": 120,
+            "FloorPrice": 10,
+            "TargetPrice": 75.2,
+            "StretchPrice": 19,
+            "PriceType": "CashFlat",
+            "AptRateCategory": "Rate 2",
+            "AptRateScore": 120,
+            "AptRateRank": 3,
+            "AptRateSegmentAvg": 20,
+            "OpenCapacityPctRank": 5,
+            "OpenCapacityCategory": 13,
+            "OpenCapacityScore": 24,
+            "SegmentQT": "M-124",
+            "Error": "",
+            "Warning": ""
+        }]
+}
+var part = partResp.Parts
+var data = payload.GetCashPriceResponse.GetCashPriceResult
+fun addExtra(data,items) = (data map (user) -> if((user.PartNumber contains(items.PartNumber))) user ++ { "AptRateCategory": items.AptRateCategory,
+            "AptRateScore": items.AptRateScore,
+            "AptRateRank": items.AptRateRank,
+            "AptRateSegmentAvg": items.AptRateSegmentAvg,
+            "OpenCapacityPctRank": items.OpenCapacityPctRank,
+            "OpenCapacityCategory": items.OpenCapacityCategory,
+            "OpenCapacityScore": items.OpenCapacityScore,
+            "SegmentQT": items.SegmentQT,}
+             else {} 
+             )
+             
+var finalPayload = {
+  "GetCashPriceResponse": {
+    "GetCashPriceResult": {
+      "AccountNumberUsed": data.AccountNumberUsed,
+      "InformationMessages": data.InformationMessages ,
+      "PartDetails": {
+        "PartInformation": (part map ((item, index) ->addExtra(data.PartDetails.PartInformation,item) ) ) 
+      },
+      "TotalOrderCost": 450,
+      "ZipCodeUsed": "34785"
+    }
+  }
+}
+---
+finalPayload  update {
+        case GetCashPriceResponse at .GetCashPriceResponse.GetCashPriceResult.TotalOrderCost->  partResp.Header.TotalOrderCost
+        case GetCashPriceResponse at .GetCashPriceResponse.GetCashPriceResult.PartDetails.PartInformation -> GetCashPriceResponse reduce ((item, accumulator) -> item ++ accumulator) filter ($ != {}) 
+} 
+
+
+
+
+=========================
+%dw 2.0
+output application/json
+var CallDateTime = now() as DateTime {format: "yyyy-MM-ddTHH:mm:ss"}
+var Timestamp = now() as DateTime {format: "yyyy-MM-ddTHH:mm:ss:fff"}
+---
+{
+    now : now(),
+    "CallDateTime": now() as DateTime as String,
+	"Timestamp": now() as DateTime 
+}
+
+===================
+Request
+{
+  "Header": {
+    "CustomerNumber": "S169140586",
+    "VehicleMake": "DODGE",
+    "VehicleModel": "PICKUP 1500",
+    "VehicleYear": "2008",
+    "ZipCode": "34785",
+    "IncomeCategoryLevel": "",
+    "Currency": "USD",
+    "Store": "04160",
+    "StoreOpenCapacityRepair": 108,
+    "StoreTotalCapacityRepair": 108,
+    "StoreOpenCapacityReplace": 136,
+    "StoreTotalCapacityReplace": 108,
+    "JobType": "Repair",
+    "DayofCall": "FRIDAY",
+    "Seasonality": "",
+    "VehicleAgeGroup": "H"
+  },
+  "Parts": [
+    {
+      "id": "id-1",
+      "PartNumber": "DW01728 GTNOEM"
+    },
+    {
+      "id": "id-2",
+      "PartNumber": "DISPOSAL FEE"
+    },
+    {
+      "id": "id-3",
+      "PartNumber": "MOBILE FEE"
+    },
+	{
+      "id": "id-4",
+      "PartNumber": "WSREPAIR"
+    },
+	{
+      "id": "id-5",
+      "PartNumber": "WSREPAIR-2"
+    },
+	{
+      "id": "id-6",
+      "PartNumber": "WSREPAIR-3"
+    },
+	{
+      "id": "id-7",
+      "PartNumber": "WSREPAIR-3"
+    },
+	{
+      "id": "id-8",
+      "PartNumber": "WSREPAIR-3"
+    },
+	{
+      "id": "id-9",
+      "PartNumber": "MWSREPAIR"
+    },
+	{
+      "id": "id-10",
+      "PartNumber": "MWSREPAIR-2"
+    },
+	{
+      "id": "id-11",
+      "PartNumber": "MWSREPAIR-3"
+    },
+	{
+      "id": "id-12",
+      "PartNumber": "MWSREPAIR-3"
+    },
+	{
+      "id": "id-13",
+      "PartNumber": "MWSREPAIR-3"
+    }
+  ]
+}
+--------------------------------
+{
+  "Header": {
+    "CustomerNumber": "S169140586",
+    "VehicleMake": "DODGE",
+    "VehicleModel": "PICKUP 1500",
+    "VehicleYear": "2008",
+    "ZipCode": "34785",
+    "IncomeCategoryLevel": "",
+    "Currency": "USD",
+    "Store": "04160",
+    "StoreOpenCapacityRepair": 108,
+    "StoreTotalCapacityRepair": 108,
+    "StoreOpenCapacityReplace": 136,
+    "StoreTotalCapacityReplace": 108,
+    "JobType": "Repair",
+    "DayofCall": "FRIDAY",
+    "Seasonality": "",
+    "VehicleAgeGroup": "H"
+  },
+  "Parts": [
+    {
+      "id": "id-1",
+      "PartNumber": "DW01728 GTNOEM"
+    },
+    {
+      "id": "id-2",
+      "PartNumber": "DISPOSAL FEE"
+    },
+    {
+      "id": "id-3",
+      "PartNumber": "MOBILE FEE"
+    },
+	{
+      "id": "id-4",
+      "PartNumber": "WSREPAIR"
+    },
+	{
+      "id": "id-5",
+      "PartNumber": "WSREPAIR"
+    },
+	{
+      "id": "id-6",
+      "PartNumber": "WSREPAIR"
+    },
+	{
+      "id": "id-9",
+      "PartNumber": "MWSREPAIR"
+    },
+	{
+      "id": "id-10",
+      "PartNumber": "MWSREPAIR"
+    },
+	{
+      "id": "id-11",
+      "PartNumber": "MWSREPAIR"
+    }
+  ]
+}
+----------------------
+
+===============
+response
+var EON = payload.Header.CustomerNumber
+var parts = payload.Parts
+var res = {
+    "Header": {
+        "CustomerNumber": "S169140586",
+        "ZipCode": "34785",
+        "Currency": "USD",
+        "Error": {
+            "Errors": [
+                {
+                    "ErrorMessages": "No errors",
+                    "ErrorCodes": "0"
+                }
+            ],
+            "HasError": "0"
+        },
+        "TotalOrderCost": 276.05
+    },
+    "Parts": [
+        {
+            "type": "BulkItem",
+            "OpenCapacityCategory": "H",
+            "Warning": "Cash Price Record Not Found for Item DW01728 GTNOEM",
+            "PartNumber": "DW01728 GTNOEM",
+            "PartCost": 317,
+            "displayName": "",
+            "Error": {
+                "type": "SafeLiteError",
+                "Errors": [
+                    {
+                        "type": "SafeLiteErrorCodes",
+                        "ErrorMessages": "No errors",
+                        "ErrorCodes": "0",
+                        "displayName": ""
+                    }
+                ],
+                "HasError": "0",
+                "displayName": ""
+            },
+            "PricingSourceSystemCode": "VEN-2",
+            "AptRateRank": 84.0,
+            "ListPrice": 362.37,
+            "TargetPrice": 281.09,
+            "AptRateSegmentAvg": 27.829561,
+            "FloorPrice": 276.05,
+            "AptRateCategory": "VH",
+            "StretchPrice": 291.31,
+            "AptRateScore": 5,
+            "OpenCapacityPctRank": 64.04,
+            "OpenCapacityScore": 4,
+            "PartPriceTarget": {
+                "type": "PartPrice",
+                "LaborAmount": 70,
+                "ExtendedPriceWLabor": 351.09,
+                "DiscountAmount": -81.28,
+                "DiscountPercent": -0.224300014572491,
+                "displayName": ""
+            },
+            "id": "id-1",
+            "PriceType": "CashRepair",
+            "SegmentQT": "355",
+            "PartPriceFloor": {
+                "type": "PartPrice",
+                "LaborAmount": 70,
+                "ExtendedPriceWLabor": 346.05,
+                "DiscountAmount": -86.32,
+                "DiscountPercent": -0.238211197165118,
+                "displayName": ""
+            },
+            "PartPriceStretch": {
+                "type": "PartPrice",
+                "LaborAmount": 70,
+                "ExtendedPriceWLabor": 361.31,
+                "DiscountAmount": -71.06,
+                "DiscountPercent": -0.19610531116828,
+                "displayName": ""
+            }
+        },
+        {
+            "type": "BulkItem",
+            "OpenCapacityCategory": "H",
+            "Warning": "PartCost Record Not Found for Item DISPOSAL FEE,Labour Amount not found for Item DISPOSAL FEE",
+            "PartNumber": "DISPOSAL FEE",
+            "PartCost": 0,
+            "displayName": "",
+            "Error": {
+                "type": "SafeLiteError",
+                "Errors": [
+                    {
+                        "type": "SafeLiteErrorCodes",
+                        "ErrorMessages": "No errors",
+                        "ErrorCodes": "0",
+                        "displayName": ""
+                    }
+                ],
+                "HasError": "0",
+                "displayName": ""
+            },
+            "PricingSourceSystemCode": "VEN-1",
+            "AptRateRank": 84.0,
+            "ListPrice": 4.99,
+            "TargetPrice": 14.99,
+            "AptRateSegmentAvg": 27.829561,
+            "FloorPrice": 14.99,
+            "AptRateCategory": "VH",
+            "StretchPrice": 14.99,
+            "AptRateScore": 5,
+            "OpenCapacityPctRank": 64.04,
+            "OpenCapacityScore": 4,
+            "PartPriceTarget": {
+                "type": "PartPrice",
+                "LaborAmount": 0,
+                "ExtendedPriceWLabor": 14.99,
+                "DiscountAmount": 10,
+                "DiscountPercent": 2.004008016032064,
+                "displayName": ""
+            },
+            "id": "id-2",
+            "PriceType": "CashFlat",
+            "SegmentQT": "355",
+            "PartPriceFloor": {
+                "type": "PartPrice",
+                "LaborAmount": 0,
+                "ExtendedPriceWLabor": 14.99,
+                "DiscountAmount": 10,
+                "DiscountPercent": 2.004008016032064,
+                "displayName": ""
+            },
+            "PartPriceStretch": {
+                "type": "PartPrice",
+                "LaborAmount": 0,
+                "ExtendedPriceWLabor": 14.99,
+                "DiscountAmount": 10,
+                "DiscountPercent": 2.004008016032064,
+                "displayName": ""
+            }
+        },
+        {
+            "type": "BulkItem",
+            "OpenCapacityCategory": "H",
+            "Warning": "Cash Price Record Not Found for Item MOBILE FEE,Labour Amount not found for Item MOBILE FEE",
+            "PartNumber": "MOBILE FEE",
+            "PartCost": 0,
+            "displayName": "",
+            "Error": {
+                "type": "SafeLiteError",
+                "Errors": [
+                    {
+                        "type": "SafeLiteErrorCodes",
+                        "ErrorMessages": "No errors",
+                        "ErrorCodes": "0",
+                        "displayName": ""
+                    }
+                ],
+                "HasError": "0",
+                "displayName": ""
+            },
+            "PricingSourceSystemCode": "VEN-2",
+            "AptRateRank": 84.0,
+            "ListPrice": 24.99,
+            "TargetPrice": 0,
+            "AptRateSegmentAvg": 27.829561,
+            "FloorPrice": 0,
+            "AptRateCategory": "VH",
+            "StretchPrice": 0,
+            "AptRateScore": 5,
+            "OpenCapacityPctRank": 64.04,
+            "OpenCapacityScore": 4,
+            "PartPriceTarget": {
+                "type": "PartPrice",
+                "LaborAmount": 0,
+                "ExtendedPriceWLabor": 0,
+                "DiscountAmount": -24.99,
+                "DiscountPercent": -1,
+                "displayName": ""
+            },
+            "id": "id-3",
+            "PriceType": "CashRepair",
+            "SegmentQT": "355",
+            "PartPriceFloor": {
+                "type": "PartPrice",
+                "LaborAmount": 0,
+                "ExtendedPriceWLabor": 0,
+                "DiscountAmount": -24.99,
+                "DiscountPercent": -1,
+                "displayName": ""
+            },
+            "PartPriceStretch": {
+                "type": "PartPrice",
+                "LaborAmount": 0,
+                "ExtendedPriceWLabor": 0,
+                "DiscountAmount": -24.99,
+                "DiscountPercent": -1,
+                "displayName": ""
+            }
+        }
+    ]
+}
+-------------
+Request Dw code
+
+{
+    "Header" : payload.Header,
+    "Parts" : payload.Parts map (() -> 
+    if($$ < 3)
+        (if($$ == 0 )
+        ({
+            "id" : $.id,
+            "PartNumber": $.PartNumber
+        }) 
+        else ({
+          "id" : $.id,
+          "PartNumber": $.PartNumber replace  ("-" ++ ($$ + 1)) with ""
+        })) 
+    else { 
+          "id" : $.id,
+          "PartNumber": $.PartNumber replace  ("-3") with ""
+} )
+}
+------------------
+%dw 2.0
+output application/json
+---
+{
+    "Header" : payload.Header,
+    "Parts" : payload.Parts map (() -> 
+    	if($$ < 3)
+    		(if($$ == 0 )
+    		({
+ 				"id" : $.id,
+ 				"PartNumber": $.PartNumber
+			}) else ({
+ 				"id" : $.id,
+ 				"PartNumber": $.PartNumber ++"-" ++ ($$ + 1)
+		}) ) 
+		else {
+ 			"id" : $.id,
+ 			"PartNumber": $.PartNumber ++ "-3"
+		} ) 
+}
+---------------
+====================================
+%dw 2.0
+output application/json
+---
+{
+    "Header" : payload.Header,
+    "Parts" : payload.Parts map (() -> 
+    if($$ < 3)
+        (if($$ == 0)({
+            ($)  }) 
+        else ({
+        "type": $."type",
+        "OpenCapacityCategory" : $.OpenCapacityCategory,
+        "Warning" : $.Warning,
+        "PartNumber": $.PartNumber replace  ("-" ++ ($$+1)) with "",
+        "PartCost" : $.PartCost,
+        "displayName" : $.displayName,
+        "Error" : $.Error,
+        "PricingSourceSystemCode" : $.PricingSourceSystemCode,
+        "AptRateRank" : $.AptRateRank,
+        "ListPrice" : $.ListPrice,
+        "TargetPrice" : $.TargetPrice,
+        "AptRateSegmentAvg" : $.AptRateSegmentAvg,
+        "FloorPrice": $.FloorPrice,
+        "AptRateCategory": $.AptRateCategory,
+        "StretchPrice": $.StretchPrice,
+        "AptRateScore": $.AptRateScore,
+        "OpenCapacityPctRank": $.OpenCapacityPctRank,
+        "OpenCapacityScore": $.OpenCapacityScore,
+        "PartPriceTarget": $.PartPriceTarget,
+        "id": $.id,
+        "PriceType": $.PriceType,
+        "SegmentQT": $.SegmentQT,
+        "PartPriceFloor": $.PartPriceFloor,
+        "PartPriceStretch": $.PartPriceStretch
+        })) 
+    else {
+        "type": $."type",
+        "OpenCapacityCategory" : $.OpenCapacityCategory,
+        "Warning" : $.Warning,
+        "PartNumber": $.PartNumber replace  "-3" with "",
+        "PartCost" : $.PartCost,
+        "displayName" : $.displayName,
+        "Error" : $.Error,
+        "PricingSourceSystemCode" : $.PricingSourceSystemCode,
+        "AptRateRank" : $.AptRateRank,
+        "ListPrice" : $.ListPrice,
+        "TargetPrice" : $.TargetPrice,
+        "AptRateSegmentAvg" : $.AptRateSegmentAvg,
+        "FloorPrice": $.FloorPrice,
+        "AptRateCategory": $.AptRateCategory,
+        "StretchPrice": $.StretchPrice,
+        "AptRateScore": $.AptRateScore,
+        "OpenCapacityPctRank": $.OpenCapacityPctRank,
+        "OpenCapacityScore": $.OpenCapacityScore,
+        "PartPriceTarget": $.PartPriceTarget,
+        "id": $.id,
+        "PriceType": $.PriceType,
+        "SegmentQT": $.SegmentQT,
+        "PartPriceFloor": $.PartPriceFloor,
+        "PartPriceStretch": $.PartPriceStretch
+} )
+}
+
+=================================
+%dw 2.0
+output application/json
+
+var VendavoPriceResponse = {
+  "Header": {
+    "CustomerNumber": "S169140586",
+    "ZipCode": "34785",
+    "Currency": "USD",
+    "Error": {
+      "Errors": [
+        {
+          "ErrorMessages": "No errors",
+          "ErrorCodes": "0"
+        }
+      ],
+      "HasError": "1"
+    },
+    "TotalOrderCost": 191.36
+  },
+  "Parts": [
+    {
+      "type": "BulkItem",
+      "OpenCapacityCategory": "VL",
+      "Warning": "Cash Price Record Not Found for Item DW01728 GTNOEM",
+      "PartNumber": "DW01728 GTNOEM",
+      "PartCost": 252,
+      "displayName": "",
+      "Error": {
+        "type": "SafeLiteError",
+        "Errors": [
+          {
+            "type": "SafeLiteErrorCodes",
+            "ErrorMessages": "No errors",
+            "ErrorCodes": "0",
+            "displayName": ""
+          }
+        ],
+        "HasError": "0",
+        "displayName": ""
+      },
+      "PricingSourceSystemCode": "VEN-2",
+      "AptRateRank": 75.0,
+      "ListPrice": 362.37,
+      "TargetPrice": 200.42,
+      "AptRateSegmentAvg": 25.390625,
+      "FloorPrice": 191.36,
+      "AptRateCategory": "H",
+      "StretchPrice": 209.03,
+      "AptRateScore": 4,
+      "OpenCapacityPctRank": 9.59,
+      "OpenCapacityScore": 1,
+      "PartPriceTarget": {
+        "type": "PartPrice",
+        "LaborAmount": 70,
+        "ExtendedPriceWLabor": 270.42,
+        "DiscountAmount": -161.95,
+        "DiscountPercent": -0.446921497237574,
+        "displayName": ""
+      },
+      "id": "id-1",
+      "PriceType": "CashRepair",
+      "SegmentQT": "355",
+      "PartPriceFloor": {
+        "type": "PartPrice",
+        "LaborAmount": 70,
+        "ExtendedPriceWLabor": 261.36,
+        "DiscountAmount": -171.01,
+        "DiscountPercent": -0.471913685865133,
+        "displayName": ""
+      },
+      "PartPriceStretch": {
+        "type": "PartPrice",
+        "LaborAmount": 70,
+        "ExtendedPriceWLabor": 279.03,
+        "DiscountAmount": -153.34,
+        "DiscountPercent": -0.423158188513302,
+        "displayName": ""
+      }
+    },
+    {
+      "type": "BulkItem",
+      "OpenCapacityCategory": null,
+      "Warning": null,
+      "PartNumber": "DISPOSAL FEE-2",
+      "PartCost": 0,
+      "displayName": "",
+      "Error": {
+        "type": "SafeLiteError",
+        "Errors": [
+          {
+            "type": "SafeLiteErrorCodes",
+            "ErrorMessages": "PartNumber Blank or Not Found",
+            "ErrorCodes": "5027",
+            "displayName": ""
+          }
+        ],
+        "HasError": "1",
+        "displayName": ""
+      },
+      "PricingSourceSystemCode": null,
+      "AptRateRank": 0.0,
+      "ListPrice": 0,
+      "TargetPrice": 0,
+      "AptRateSegmentAvg": 0.0,
+      "FloorPrice": 0,
+      "AptRateCategory": null,
+      "StretchPrice": 0,
+      "AptRateScore": 0,
+      "OpenCapacityPctRank": 0.0,
+      "OpenCapacityScore": 0,
+      "PartPriceTarget": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      },
+      "id": "id-2",
+      "PriceType": null,
+      "SegmentQT": null,
+      "PartPriceFloor": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      },
+      "PartPriceStretch": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      }
+    },
+    {
+      "type": "BulkItem",
+      "OpenCapacityCategory": null,
+      "Warning": null,
+      "PartNumber": "MOBILE FEE-3",
+      "PartCost": 0,
+      "displayName": "",
+      "Error": {
+        "type": "SafeLiteError",
+        "Errors": [
+          {
+            "type": "SafeLiteErrorCodes",
+            "ErrorMessages": "PartNumber Blank or Not Found",
+            "ErrorCodes": "5027",
+            "displayName": ""
+          }
+        ],
+        "HasError": "1",
+        "displayName": ""
+      },
+      "PricingSourceSystemCode": null,
+      "AptRateRank": 0.0,
+      "ListPrice": 0,
+      "TargetPrice": 0,
+      "AptRateSegmentAvg": 0.0,
+      "FloorPrice": 0,
+      "AptRateCategory": null,
+      "StretchPrice": 0,
+      "AptRateScore": 0,
+      "OpenCapacityPctRank": 0.0,
+      "OpenCapacityScore": 0,
+      "PartPriceTarget": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      },
+      "id": "id-3",
+      "PriceType": null,
+      "SegmentQT": null,
+      "PartPriceFloor": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      },
+      "PartPriceStretch": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      }
+    },
+    {
+      "type": "BulkItem",
+      "OpenCapacityCategory": null,
+      "Warning": null,
+      "PartNumber": "TEST-3",
+      "PartCost": 0,
+      "displayName": "",
+      "Error": {
+        "type": "SafeLiteError",
+        "Errors": [
+          {
+            "type": "SafeLiteErrorCodes",
+            "ErrorMessages": "PartNumber Blank or Not Found",
+            "ErrorCodes": "5027",
+            "displayName": ""
+          }
+        ],
+        "HasError": "1",
+        "displayName": ""
+      },
+      "PricingSourceSystemCode": null,
+      "AptRateRank": 0.0,
+      "ListPrice": 0,
+      "TargetPrice": 0,
+      "AptRateSegmentAvg": 0.0,
+      "FloorPrice": 0,
+      "AptRateCategory": null,
+      "StretchPrice": 0,
+      "AptRateScore": 0,
+      "OpenCapacityPctRank": 0.0,
+      "OpenCapacityScore": 0,
+      "PartPriceTarget": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      },
+      "id": "id-3",
+      "PriceType": null,
+      "SegmentQT": null,
+      "PartPriceFloor": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      },
+      "PartPriceStretch": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      }
+    },
+    {
+      "type": "BulkItem",
+      "OpenCapacityCategory": null,
+      "Warning": null,
+      "PartNumber": "TEST1-3",
+      "PartCost": 0,
+      "displayName": "",
+      "Error": {
+        "type": "SafeLiteError",
+        "Errors": [
+          {
+            "type": "SafeLiteErrorCodes",
+            "ErrorMessages": "PartNumber Blank or Not Found",
+            "ErrorCodes": "5027",
+            "displayName": ""
+          }
+        ],
+        "HasError": "1",
+        "displayName": ""
+      },
+      "PricingSourceSystemCode": null,
+      "AptRateRank": 0.0,
+      "ListPrice": 0,
+      "TargetPrice": 0,
+      "AptRateSegmentAvg": 0.0,
+      "FloorPrice": 0,
+      "AptRateCategory": null,
+      "StretchPrice": 0,
+      "AptRateScore": 0,
+      "OpenCapacityPctRank": 0.0,
+      "OpenCapacityScore": 0,
+      "PartPriceTarget": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      },
+      "id": "id-3",
+      "PriceType": null,
+      "SegmentQT": null,
+      "PartPriceFloor": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      },
+      "PartPriceStretch": {
+        "type": "PartPrice",
+        "LaborAmount": 0,
+        "ExtendedPriceWLabor": 0,
+        "DiscountAmount": 0,
+        "DiscountPercent": 0,
+        "displayName": ""
+      }
+    }
+  ]
+}
+var thirdRepair = VendavoPriceResponse.Parts[2]
+---
+{
+    "Header" : VendavoPriceResponse.Header,
+    "Parts" : VendavoPriceResponse.Parts map (() ->   
+    {
+        "type": $."type",
+        "OpenCapacityCategory" : $.OpenCapacityCategory,
+        "Warning" : $.Warning,
+        "PartNumber" : $.PartNumber replace  ("-" ++ ($$+1)) with "",
+        "PartCost" : $.PartCost,
+        "displayName" : $.displayName,
+        "Error" : $.Error,
+        "PricingSourceSystemCode" : $.PricingSourceSystemCode,
+        "AptRateRank" : $.AptRateRank,
+        "ListPrice" : $.ListPrice,
+        "TargetPrice" : $.TargetPrice,
+        "AptRateSegmentAvg" : $.AptRateSegmentAvg,
+        "FloorPrice": $.FloorPrice,
+        "AptRateCategory": $.AptRateCategory,
+        "StretchPrice": $.StretchPrice,
+        "AptRateScore": $.AptRateScore,
+        "OpenCapacityPctRank": $.OpenCapacityPctRank,
+        "OpenCapacityScore": $.OpenCapacityScore,
+        "PartPriceTarget": $.PartPriceTarget,
+        "id": $.id,
+        "PriceType": $.PriceType,
+        "SegmentQT": $.SegmentQT,
+        "PartPriceFloor": $.PartPriceFloor,
+        "PartPriceStretch": $.PartPriceStretch
+    }
+     )
+}
+
+==============================
+
+enable http wire logging.
+get apps logs for both nodes
+---------------
+%dw 2.0
+output application/json
+---
+{
+    "Header" : payload.Header,
+    "Parts" : payload.Parts map (() -> 
+
+        (if($$ == 0 )({ ($)  }) 
+        else ({
+        "type": $."type",
+        "OpenCapacityCategory" : $.OpenCapacityCategory,
+        "Warning" : $.Warning,
+        "PartNumber": $.PartNumber replace  ("-" ++ ($$+1)) with "",
+        "PartCost" : $.PartCost,
+        "displayName" : $.displayName,
+        "Error" : $.Error,
+        "PricingSourceSystemCode" : $.PricingSourceSystemCode,
+        "AptRateRank" : $.AptRateRank,
+        "ListPrice" : $.ListPrice,
+        "TargetPrice" : $.TargetPrice,
+        "AptRateSegmentAvg" : $.AptRateSegmentAvg,
+        "FloorPrice": $.FloorPrice,
+        "AptRateCategory": $.AptRateCategory,
+        "StretchPrice": $.StretchPrice,
+        "AptRateScore": $.AptRateScore,
+        "OpenCapacityPctRank": $.OpenCapacityPctRank,
+        "OpenCapacityScore": $.OpenCapacityScore,
+        "PartPriceTarget": $.PartPriceTarget,
+        "id": $.id,
+        "PriceType": $.PriceType,
+        "SegmentQT": $.SegmentQT,
+        "PartPriceFloor": $.PartPriceFloor,
+        "PartPriceStretch": $.PartPriceStretch
+        }))   )
+}
+=========================================
+{
+  "Header": {
+    "CustomerNumber": "S169140586",
+    "VehicleMake": "DODGE",
+    "VehicleModel": "PICKUP 1500",
+    "VehicleYear": "2008",
+    "ZipCode": "34785",
+    "IncomeCategoryLevel": "",
+    "Currency": "USD",
+    "Store": "04160",
+    "StoreOpenCapacityRepair": 108,
+    "StoreTotalCapacityRepair": 108,
+    "StoreOpenCapacityReplace": 136,
+    "StoreTotalCapacityReplace": 108,
+    "JobType": "Repair",
+    "DayofCall": "FRIDAY",
+    "Seasonality": "",
+    "VehicleAgeGroup": "H"
+  },
+  "Parts": [
+    {
+      "id": "id-1",
+      "PartNumber": "DW01728 GTNOEM"
+    },
+    {
+      "id": "id-2",
+      "PartNumber": "DISPOSAL FEE"
+    },
+    {
+      "id": "id-3",
+      "PartNumber": "MOBILE FEE"
+    },
+	{
+      "id": "id-4",
+      "PartNumber": "WSREPAIR"
+    },
+	{
+      "id": "id-5",
+      "PartNumber": "WSREPAIR"
+    },
+    {
+      "id": "id-6",
+      "PartNumber": "WSREPAIR"
+    },
+    {
+      "id": "id-7",
+      "PartNumber": "WSREPAIR"
+    },
+    {
+      "id": "id-8",
+      "PartNumber": "MWSREPAIR"
+    },
+    {
+      "id": "id-9",
+      "PartNumber": "MWSREPAIR"
+    },
+	{
+      "id": "id-10",
+      "PartNumber": "MWSREPAIR"
+    },
+	{
+      "id": "id-11",
+      "PartNumber": "MWSREPAIR"
+    }
+  ]
+}
+---------------------------
+%dw 2.0
+output application/json
+var wsRepair =(payload.Parts filter (() -> $.PartNumber == "WSREPAIR" )) map (() -> if($$ < 3)(if($$ ==0 )({
+ "id" : $.id,
+ "PartNumber": $.PartNumber
+}) else ({
+ "id" : $.id,
+ "PartNumber": $.PartNumber ++"-" ++ ($$ + 1)
+}) ) else {
+ "id" : $.id,
+ "PartNumber": $.PartNumber ++"-3"
+} )
+
+// var m =(wsRepair map ()->("value": {
+//  "id" : $.id,
+//  "PartNumber": $.PartNumber
+// }))
+
+var mwsRepair = (((payload.Parts filter (() -> $.PartNumber == "MWSREPAIR" )))) map (() -> if($$ < 3)(if($$ ==0 )({
+ "id" : $.id,
+ "PartNumber": $.PartNumber
+}) else ({
+ "id" : $.id,
+ "PartNumber": $.PartNumber ++"-" ++ ($$ + 1)
+}) ) else {
+ "id" : $.id,
+ "PartNumber": $.PartNumber ++"-3"
+} )
+
+var part = payload.Parts filter (() ->$.PartNumber != "MWSREPAIR" and $.PartNumber != "WSREPAIR" )
+var finalPayload = (part ++ wsRepair ++ mwsRepair)
+---
+{
+    "Header" : payload.Header,
+    "Parts" : finalPayload orderBy ((item, index) ->item.id[1] )
+}
+
+-------------------------------
+================================
+payload.Parts map (() -> 
+ $.PartNumber match {
+     case is String -> if(($ contains("MWSREPAIR"))) $
+     
+     else $
+     else -> "Nothing"
+ }
+)
+payload.Parts map (() -> 
+ ($.PartNumber match 
+ {
+     case is "MWSREPAIR" ->  
+     ({"PartNumber" : $})
+     case is "WSREPAIR" -> ({"PartNumber" : ""})
+     else -> ("PartNumber" : "Other")
+ }) 
+)
+payload.Parts filter ((item, index) -> 
+    ((item.PartNumber matches "WSREPAIR") or 
+    (item.PartNumber matches ("WSREPAIR" ++ "-" ++ index + 1))))
+	
+-----------------
+%dw 2.0
+output application/json
+var MWS =payload.Parts filter ((item, index) ->item.PartNumber contains "MWSREPAIR")
+var M= MWS map()->(if($$<3) $  else MWS[3] )
+var S =(payload.Parts filter ((item, index) ->item.PartNumber != "MWSREPAIR"))
+
+var WS =S filter ((item, index) ->item.PartNumber contains "WSREPAIR" )
+var w =WS map()->(if($$<3) $  else WS[3] )
+---
+(payload.Parts map()-> (if($.PartNumber contains "WSREPAIR") {} else $ ))  filter ($ != {}) ++ M ++ w
+--------------------
+
+===================================
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Z_MM_VARIANT_CONFIG_OPTIONS>
+<tables>
+    <CONFIG_INST/>
+    <CONFIG_VALUES>
+    <row id="0">
+        <CONFIG_ID>000001</CONFIG_ID>
+        <INST_ID>000001</INST_ID>
+        <CHARC>Z_SUPPORTMONTHS1</CHARC>
+        <CHARC_TXT>Support Contract Length (mon</CHARC_TXT>
+        <VALUE/>
+        <VALUE_TXT/>
+        <AUTHOR/>
+        <VALUE_TO/>
+        <VALCODE/>
+    </row>
+<row id="1">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_TYPE</CHARC>
+<CHARC_TXT>Support Type</CHARC_TXT>
+<VALUE/>
+<VALUE_TXT/>
+<AUTHOR/>
+<VALUE_TO/>
+<VALCODE/>
+</row>
+<row id="2">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<CHARC_TXT>License Type</CHARC_TXT>
+<VALUE/>
+<VALUE_TXT/>
+<AUTHOR/>
+<VALUE_TO/>
+<VALCODE/>
+</row>
+<row id="3">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_CATEGORY</CHARC>
+<CHARC_TXT>Support Category</CHARC_TXT>
+<VALUE/>
+<VALUE_TXT/>
+<AUTHOR/>
+<VALUE_TO/>
+<VALCODE/>
+</row>
+<row id="4">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_REV_REC_METHOD_SUPP_INPUT</CHARC>
+<CHARC_TXT>MGC Rev Rec Type - Support</CHARC_TXT>
+<VALUE/>
+<VALUE_TXT/>
+<AUTHOR/>
+<VALUE_TO/>
+<VALCODE/>
+</row>
+</CONFIG_VALUES>
+<CONFIG_VALUES_LIST>
+<row id="0">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORTMONTHS1</CHARC>
+<VALUE/>
+<DESCR_CVAL/>
+<LOCKED>C</LOCKED>
+</row>
+<row id="1">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_TYPE</CHARC>
+<VALUE>C</VALUE>
+<DESCR_CVAL>Classic Support</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="2">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_TYPE</CHARC>
+<VALUE>B</VALUE>
+<DESCR_CVAL>Updates</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="3">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_TYPE</CHARC>
+<VALUE>P</VALUE>
+<DESCR_CVAL>Technical Support</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="4">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_TYPE</CHARC>
+<VALUE>R</VALUE>
+<DESCR_CVAL>Re-Instatement</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="5">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>F</VALUE>
+<DESCR_CVAL>Floating</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="6">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>E</VALUE>
+<DESCR_CVAL>Site Float</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="7">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>N</VALUE>
+<DESCR_CVAL>Node Locked</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="8">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>M</VALUE>
+<DESCR_CVAL>Mobile Compute</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="9">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>CY</VALUE>
+<DESCR_CVAL>Country Float</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="10">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>C1</VALUE>
+<DESCR_CVAL>Continental I Float</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="11">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>C2</VALUE>
+<DESCR_CVAL>Continental II Float</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="12">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>G</VALUE>
+<DESCR_CVAL>Global Float</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="13">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>U</VALUE>
+<DESCR_CVAL>Uplift NL to Floating</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="14">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>MU</VALUE>
+<DESCR_CVAL>Uplift MC to Floating</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="15">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>LICENSE_TYPE</CHARC>
+<VALUE>NMU</VALUE>
+<DESCR_CVAL>Uplift NL to MC</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="16">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_CATEGORY</CHARC>
+<VALUE>01</VALUE>
+<DESCR_CVAL>New</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="17">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_CATEGORY</CHARC>
+<VALUE>02</VALUE>
+<DESCR_CVAL>Renewal</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="18">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_CATEGORY</CHARC>
+<VALUE>03</VALUE>
+<DESCR_CVAL>Reinstatement</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="19">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_CATEGORY</CHARC>
+<VALUE>04</VALUE>
+<DESCR_CVAL>Siteline</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="20">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_CATEGORY</CHARC>
+<VALUE>06</VALUE>
+<DESCR_CVAL>Dummy Remix</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="21">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_SUPPORT_CATEGORY</CHARC>
+<VALUE>08</VALUE>
+<DESCR_CVAL>Recovery</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="22">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_REV_REC_METHOD_SUPP_INPUT</CHARC>
+<VALUE>R</VALUE>
+<DESCR_CVAL>R - Ratable</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="23">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_REV_REC_METHOD_SUPP_INPUT</CHARC>
+<VALUE>D</VALUE>
+<DESCR_CVAL>D - Cash Based - Ratable</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+<row id="24">
+<CONFIG_ID>000001</CONFIG_ID>
+<INST_ID>000001</INST_ID>
+<CHARC>Z_REV_REC_METHOD_SUPP_INPUT</CHARC>
+<VALUE>Q</VALUE>
+<DESCR_CVAL>Q - Due and Payable - Ratable</DESCR_CVAL>
+<LOCKED>C</LOCKED>
+</row>
+</CONFIG_VALUES_LIST>
+<MATERIAL_ITEMS>
+<row id="0">
+<ITM_NUMBER>000001</ITM_NUMBER>
+<MATERIAL>000000000000239801</MATERIAL>
+<OBJ_TYPE/>
+<CLASS_TYPE>Z99</CLASS_TYPE>
+<OBJ_KEY/>
+<OBJ_TXT/>
+<DELIVERY_DATE>Fri Oct 08 00:00:00 IST 2021</DELIVERY_DATE>
+</row>
+</MATERIAL_ITEMS>
+<RETURN/>
+</tables>
+</Z_MM_VARIANT_CONFIG_OPTIONS>
+
+dw code
+%dw 2.0
+output application/json
+---
+        ("configValuesList": payload.Z_MM_VARIANT_CONFIG_OPTIONS.tables.CONFIG_VALUES_LIST.*row distinctBy $ default [] map (configValuesListObject, index)->{
+            configId: configValuesListObject.'_-SIESW_-CONFIG_ID',
+            instId: configValuesListObject.'_-SIESW_-INST_ID',
+            charc: configValuesListObject.'_-SIESW_-CHARC',
+            value: configValuesListObject.'_-SIESW_-VALUE',
+            descCVal: configValuesListObject.'_-SIESW_-DESCR_CVAL',
+            locked: configValuesListObject.'_-SIESW_-LOCKED'
+        }) mapObject ((value, key, index) -> (key): value filter (sizeOf(valuesOf($) - null) > 0) )
+
+=======================
+#%RAML 1.0 DataType
+usage: Sending Receipt Confirmation details to HTTP API
+
+type: object
+additionalProperties: false
+properties:
+  ShipFromLocation:
+    type: string
+    required: true
+  ShipToLocation:
+    type: string
+    required: true
+  OrderNumber:
+    type: string
+    required: true
+  TransactionDateTime:
+    type: string
+    required: true
+  LineDetails:
+    type: array
+    required: true
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        OrderLineNumber:
+          type: string
+          required: true
+        ItemNumber:
+          type: string
+          required: true
+        ReceiptQuantity:
+          type: string
+          required: true
+        UnitOfMeasure:
+          type: string
+          required: true
+        SubinventoryCode:
+          type: string
+          required: true
+		  ===========================================
+cron job that runs every 6 minutes
+0 6/6 * 1/1 * ? *
+splunk
+apisero logging framework
+
+is there specific reasoon that you are using this one, why not using vm queue?
+data weave problems from vendavo
+mule-four-common-framework
+oauth common framework
+object store to retrieve token
+common oauth framework
+sfdc lookup
+
+
+<dependency>
+            <groupId>com.apisero.framework</groupId>
+            <artifactId>apisero-generic-logging-connector</artifactId>
+            <version>2.0.1</version>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+		
+		mvn clean package install -DskipMunitTests
+		
+		
+		https://api.weather.gov/alerts
+		
+		splunk token
+		a2c066a5-9e9f-473d-a18d-c09246df298d
+		
+		bibucket
+		github-desktop
+		wTwyPnLSN3592xkXCsZf
+		
+		
+		
+%dw 2.0
+output application/json
+var inputDate = ("06/09/2022 07:02:24" as LocalDateTime {format: "dd/MM/yyyy HH:mm:ss"})
+var hour_diff = (inputDate.hour) - (inputDate >> "America/New_York").hour  
+---
+inputDate + ("PT" ++ hour_diff ++ "H") as String{format:"yyyy-MM-dd HH:mm:ss"}
+
+============
+production issues and push new changes:
+pushed changes through hotfixes
+used rest api(lightweight) and removed soap because of timeout issue.
+scatter to push the to two diff queues.
+error handling
+list all the errors you are getting frequently and try to fix and reduce the number -> refactoring
+updating error handling through hotfixes
+project defects: File size more than 256KB is getting errored out.
+================
+before formatting numbers dw code (for formatting vendavo respo with change in parts numbers)
+%dw 2.0
+output application/json
+fun mapRepairs(thirdRepair,RepairsData) = RepairsData map (() -> 
+    if($$ < 3) ($)
+    else ({
+        "type": thirdRepair."type",
+        "OpenCapacityCategory" : thirdRepair.OpenCapacityCategory,
+        "Warning" : thirdRepair.Warning,
+        "PartNumber": thirdRepair.PartNumber,
+        "PartCost" : thirdRepair.PartCost,
+        "displayName" : thirdRepair.displayName,
+        "Error" : thirdRepair.Error,
+        "PricingSourceSystemCode" : thirdRepair.PricingSourceSystemCode,
+        "AptRateRank" : thirdRepair.AptRateRank,
+        "ListPrice" : thirdRepair.ListPrice,
+        "TargetPrice" : thirdRepair.TargetPrice,
+        "AptRateSegmentAvg" : thirdRepair.AptRateSegmentAvg,
+        "FloorPrice": thirdRepair.FloorPrice,
+        "AptRateCategory": thirdRepair.AptRateCategory,
+        "StretchPrice": thirdRepair.StretchPrice,
+        "AptRateScore": thirdRepair.AptRateScore,
+        "OpenCapacityPctRank": thirdRepair.OpenCapacityPctRank,
+        "OpenCapacityScore": thirdRepair.OpenCapacityScore,
+        "PartPriceTarget": thirdRepair.PartPriceTarget,
+        "id": $.id,
+        "PriceType": thirdRepair.PriceType,
+        "SegmentQT": thirdRepair.SegmentQT,
+        "PartPriceFloor": thirdRepair.PartPriceFloor,
+        "PartPriceStretch": thirdRepair.PartPriceStretch
+}))
+
+var wsRepairsData = (vars.VendavoPriceResponse.Parts filter ((item, index) -> 
+    item.PartNumber startsWith("WSREPAIR"))) orderBy ((item, index) -> item.PartNumber) 
+
+var mwsRepairsData = (vars.VendavoPriceResponse.Parts filter ((item, index) -> 
+	item.PartNumber startsWith("MWSREPAIR")
+)) orderBy ((item, index) -> item.PartNumber)
+
+var thirdWSRepair = wsRepairsData[2]
+var thirdMWSRepair = mwsRepairsData[2]
+
+var partNumbers = vars.VendavoPriceResponse.Parts -- (wsRepairsData ++ mwsRepairsData)
+
+var Parts = partNumbers ++ mapRepairs(thirdWSRepair,wsRepairsData) ++ mapRepairs(thirdMWSRepair,mwsRepairsData)
+
+
+---
+{
+    "Header" : vars.VendavoPriceResponse.Header,
+    "Parts" : Parts
+}
+
+
+====================
+%dw 2.0
+output application/json
+fun mapRepairs(thirdRepair,RepairsData) = RepairsData map (() -> 
+    if($$ < 3) ({
+    "type": $."type",
+    "OpenCapacityCategory" : $.OpenCapacityCategory,
+    "Warning" : $.Warning,
+    "PartNumber": $.PartNumber,
+    "PartCost" : ($.PartCost as String {format:"#.00"}) as Number,
+    "displayName" : $.displayName,
+    "Error" : $.Error,
+    "PricingSourceSystemCode" : $.PricingSourceSystemCode,
+    "AptRateRank" : $.AptRateRank,
+    "ListPrice" : ($.ListPrice as String {format:"#.00"}) as Number,
+    "TargetPrice" : ($.TargetPrice as String {format:"#.00"}) as Number,
+    "AptRateSegmentAvg" : $.AptRateSegmentAvg,
+    "FloorPrice": ($.FloorPrice as String {format:"#.00"}) as Number,
+    "AptRateCategory": $.AptRateCategory,
+    "StretchPrice": ($.StretchPrice as String {format:"#.00"}) as Number,
+    "AptRateScore": $.AptRateScore,
+    "OpenCapacityPctRank": $.OpenCapacityPctRank,
+    "OpenCapacityScore": $.OpenCapacityScore,
+    "PartPriceTarget": {
+        "type": $.PartPriceTarget."type",
+        "LaborAmount": ($.PartPriceTarget.LaborAmount as String {format:"#.00"}) as Number,
+        "ExtendedPriceWLabor": ($.PartPriceTarget.ExtendedPriceWLabor as String {format:"#.00"}) as Number,
+        "DiscountAmount": ($.PartPriceTarget.DiscountAmount as String {format:"#.00"}) as Number,
+        "DiscountPercent": $.PartPriceTarget.DiscountPercent,
+        "displayName": $.PartPriceTarget.displayName
+    },
+    "id": $.id,
+    "PriceType": $.PriceType,
+    "SegmentQT": $.SegmentQT,
+    "PartPriceFloor": {
+        "type": $.PartPriceFloor."type",
+        "LaborAmount": ($.PartPriceFloor.LaborAmount as String {format:"#.00"}) as Number,
+        "ExtendedPriceWLabor": ($.PartPriceFloor.ExtendedPriceWLabor as String {format:"#.00"}) as Number,
+        "DiscountAmount": ($.PartPriceFloor.DiscountAmount as String {format:"#.00"}) as Number,
+        "DiscountPercent": $.PartPriceFloor.DiscountPercent,
+        "displayName": $.PartPriceFloor.displayName
+    },
+    "PartPriceStretch": { 
+        "type": $.PartPriceStretch."type",
+        "LaborAmount": ($.PartPriceStretch.LaborAmount as String {format:"#.00"}) as Number,
+        "ExtendedPriceWLabor": ($.PartPriceStretch.ExtendedPriceWLabor as String {format:"#.00"}) as Number,
+        "DiscountAmount": ($.PartPriceStretch.DiscountAmount as String {format:"#.00"}) as Number,
+        "DiscountPercent": $.PartPriceStretch.DiscountPercent,
+        "displayName": $.PartPriceStretch.displayName
+        } 
+})
+    else ({
+        "type": thirdRepair."type",
+        "OpenCapacityCategory" : thirdRepair.OpenCapacityCategory,
+        "Warning" : thirdRepair.Warning,
+        "PartNumber": thirdRepair.PartNumber,
+        "PartCost" : (thirdRepair.PartCost as String {format:"#.00"}) as Number,
+        "displayName" : thirdRepair.displayName,
+        "Error" : thirdRepair.Error,
+        "PricingSourceSystemCode" : thirdRepair.PricingSourceSystemCode,
+        "AptRateRank" : thirdRepair.AptRateRank,
+        "ListPrice" : (thirdRepair.ListPrice as String {format:"#.00"}) as Number,
+        "TargetPrice" : (thirdRepair.TargetPrice as String {format:"#.00"}) as Number,
+        "AptRateSegmentAvg" : thirdRepair.AptRateSegmentAvg,
+        "FloorPrice": (thirdRepair.FloorPrice as String {format:"#.00"}) as Number,
+        "AptRateCategory": thirdRepair.AptRateCategory,
+        "StretchPrice": (thirdRepair.StretchPrice as String {format:"#.00"}) as Number,
+        "AptRateScore": thirdRepair.AptRateScore,
+        "OpenCapacityPctRank": thirdRepair.OpenCapacityPctRank,
+        "OpenCapacityScore": thirdRepair.OpenCapacityScore,
+            "PartPriceTarget": {
+            "type": thirdRepair.PartPriceTarget."type",
+            "LaborAmount": (thirdRepair.PartPriceTarget.LaborAmount as String {format:"#.00"}) as Number,
+            "ExtendedPriceWLabor": (thirdRepair.PartPriceTarget.ExtendedPriceWLabor as String {format:"#.00"}) as Number,
+            "DiscountAmount": (thirdRepair.PartPriceTarget.DiscountAmount as String {format:"#.00"}) as Number,
+            "DiscountPercent": thirdRepair.PartPriceTarget.DiscountPercent,
+            "displayName": thirdRepair.PartPriceTarget.displayName  
+        },
+        "id": thirdRepair.id,
+        "PriceType": thirdRepair.PriceType,
+        "SegmentQT": thirdRepair.SegmentQT,
+        "PartPriceFloor": {
+            "type": thirdRepair.PartPriceFloor."type",
+            "LaborAmount": (thirdRepair.PartPriceFloor.LaborAmount as String {format:"#.00"}) as Number,
+            "ExtendedPriceWLabor": (thirdRepair.PartPriceFloor.ExtendedPriceWLabor as String {format:"#.00"}) as Number,
+            "DiscountAmount": (thirdRepair.PartPriceFloor.DiscountAmount as String {format:"#.00"}) as Number,
+            "DiscountPercent": thirdRepair.PartPriceFloor.DiscountPercent,
+            "displayName": thirdRepair.PartPriceFloor.displayName  
+        },
+        "PartPriceStretch": {
+            "type": thirdRepair.PartPriceStretch."type",
+            "LaborAmount": (thirdRepair.PartPriceStretch.LaborAmount as String {format:"#.00"}) as Number,
+            "ExtendedPriceWLabor": (thirdRepair.PartPriceStretch.ExtendedPriceWLabor as String {format:"#.00"}) as Number,
+            "DiscountAmount": (thirdRepair.PartPriceStretch.DiscountAmount as String {format:"#.00"}) as Number,
+            "DiscountPercent": thirdRepair.PartPriceStretch.DiscountPercent,
+            "displayName": thirdRepair.PartPriceStretch.displayName  
+        }
+}))
+
+var wsRepairsData = (vars.VendavoPriceResponse.Parts filter ((item, index) -> 
+    item.PartNumber startsWith("WSREPAIR"))) orderBy ((item, index) -> item.PartNumber) 
+
+var mwsRepairsData = (vars.VendavoPriceResponse.Parts filter ((item, index) -> 
+	item.PartNumber startsWith("MWSREPAIR")
+)) orderBy ((item, index) -> item.PartNumber)
+
+var thirdWSRepair = wsRepairsData[2]
+var thirdMWSRepair = mwsRepairsData[2]
+
+fun formatPartsPrices(partNumbers) = partNumbers map (() -> {
+        "type": $."type",
+        "OpenCapacityCategory" : $.OpenCapacityCategory,
+        "Warning" : $.Warning,
+        "PartNumber": $.PartNumber,
+        "PartCost" : ($.PartCost as String {format:"#.00"}) as Number,
+        "displayName" : $.displayName,
+        "Error" : $.Error,
+        "PricingSourceSystemCode" : $.PricingSourceSystemCode,
+        "AptRateRank" : $.AptRateRank,
+        "ListPrice" : ($.ListPrice as String {format:"#.00"}) as Number,
+        "TargetPrice" : ($.TargetPrice as String {format:"#.00"}) as Number,
+        "AptRateSegmentAvg" : $.AptRateSegmentAvg,
+        "FloorPrice": ($.FloorPrice as String {format:"#.00"}) as Number,
+        "AptRateCategory": $.AptRateCategory,
+        "StretchPrice": ($.StretchPrice as String {format:"#.00"}) as Number,
+        "AptRateScore": $.AptRateScore,
+        "OpenCapacityPctRank": $.OpenCapacityPctRank,
+        "OpenCapacityScore": $.OpenCapacityScore,
+        "PartPriceTarget": {
+            "type": $.PartPriceTarget."type",
+            "LaborAmount": ($.PartPriceTarget.LaborAmount as String {format:"#.00"}) as Number,
+            "ExtendedPriceWLabor": ($.PartPriceTarget.ExtendedPriceWLabor as String {format:"#.00"}) as Number,
+            "DiscountAmount": ($.PartPriceTarget.DiscountAmount as String {format:"#.00"}) as Number,
+            "DiscountPercent": $.PartPriceTarget.DiscountPercent,
+            "displayName": $.PartPriceTarget.displayName
+        },
+        "id": $.id,
+        "PriceType": $.PriceType,
+        "SegmentQT": $.SegmentQT,
+        "PartPriceFloor": {
+            "type": $.PartPriceFloor."type",
+            "LaborAmount": ($.PartPriceFloor.LaborAmount as String {format:"#.00"}) as Number,
+            "ExtendedPriceWLabor": ($.PartPriceFloor.ExtendedPriceWLabor as String {format:"#.00"}) as Number,
+            "DiscountAmount": ($.PartPriceFloor.DiscountAmount as String {format:"#.00"}) as Number,
+            "DiscountPercent": $.PartPriceFloor.DiscountPercent,
+            "displayName": $.PartPriceFloor.displayName
+        },
+        "PartPriceStretch": { 
+            "type": $.PartPriceStretch."type",
+            "LaborAmount": ($.PartPriceStretch.LaborAmount as String {format:"#.00"}) as Number,
+            "ExtendedPriceWLabor": ($.PartPriceStretch.ExtendedPriceWLabor as String {format:"#.00"}) as Number,
+            "DiscountAmount": ($.PartPriceStretch.DiscountAmount as String {format:"#.00"}) as Number,
+            "DiscountPercent": $.PartPriceStretch.DiscountPercent,
+            "displayName": $.PartPriceStretch.displayName
+            }
+})
+
+var partNumbers = vars.VendavoPriceResponse.Parts -- (wsRepairsData ++ mwsRepairsData)
+var formatPartNumbersPrices = formatPartsPrices(partNumbers)
+var parts = formatPartNumbersPrices ++ mapRepairs(thirdWSRepair,wsRepairsData) ++ mapRepairs(thirdMWSRepair,mwsRepairsData)
+
+
+---
+{
+    "Header" : {
+    "CustomerNumber": vars.VendavoPriceResponse.Header.CustomerNumber,
+    "ZipCode": vars.VendavoPriceResponse.Header.ZipCode,
+    "Currency": vars.VendavoPriceResponse.Header.Currency,
+    "Error": vars.VendavoPriceResponse.Header.Error,
+    "TotalOrderCost": (vars.VendavoPriceResponse.Header.TotalOrderCost as String {format:"#.00"}) as Number
+    },
+    "Parts" : parts
+}
+
+================================
+%dw 2.0
+output application/json
+---
+"12345" ++ "-" ++ now() as String {format:"YYYYMMDDHH24MSS"}
+===================
+FTP Connector
+ different file patterns, 
+ ftp listener
+ <ftp:matcher filenamePattern="850S*" notUpdatedInTheLast="60"/>
+ ===============
+ 
+ ============
+ 1. any idea on how to split 500,000 records being fetched from Azure as binary blob, before using read() 
+dataweave utility to convert them into java Arraylist?
+Using read() directly on the 500,000 records is causing my app to hang in Cloudhub, even on 1 vCore.
+Solution:
+you should fetch records in small batches, also you can convert and split and put them in VM queue in small chunks 
+say 50K records, or any other messaging option if available, then read from queue in other flow within same application, 
+that will allow to process them.
+
+2. is there any maximum limit for application coverage in munits because I'm getting coverage for 7 munits suites 
+but if I go beyond that it gives NA. Any insight will be really helpful.
+solution:
+try to run on CMD
+
+3. someone familiar with Stored Procedures , kindly ping me. Need some assistance.
+I have few arguments defined in which one argument is not mandatory , 
+so the the value should be passed whenever we are getting the value , otherwise should be NULL by default.
+
+4. can we enforce any kind of  Authorization while calling stripe endpoints . Any documentation or blog would be helpful .TIA
+5. Has anybody configured the SFTP with the PrivateKey? If yes, What procedure should customer follow to generate this Key 
+and share with us? Or Could we generate the set of keys and share the Public Key to the Server side, use the ppk or pem 
+in configuring the SFTP? Would some one guide me through the process?
+solution:
+we are using .pem file and passphrase to connect SFTP server in our project. this .pem file is provided by client 
+DevOps team in our project .
+sample .pem file looks like this ::
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: XXXXXX
+XXXXXXXX XXXXXX
+-----END RSA PRIVATE KEY-----
+
+6. Has anyone worked on cloudhub deployment using github actions ??
+7. I am trying to retrieve a csv file > 10mb from http request .However I am getting timeout exceeded error even 
+after increasing the timeout.How to overcome this?
+solution:
+Try hitting the resource from Postman, and you'll be able to see how long it takes. And then enter the approximate 
+time in the Response Timeout.
+
+8.While performing the deployment process getting this error. Plz help if anyone faced the similar issue.
+solution:
+1. In the pom.xml file, you can change the maven plugin version to 
+<mule.maven.plugin.version>3.8.1</mule.maven.plugin.version>
+2. 2. In the agent job 1, in pipeline , if you are using package deploy, you can remove the package 
+and put deploy only and check.
+
+9. How to check standalone cores /Number of CPUs are available for the runtime for on-premise Servers?
+solution: you can not check on-prem cores
+
+10. What is the repository structure recommended for the Mulesoft Multi or Mono? The customer is pushing us to use 
+the Mono but it will be difficult manager almost 1000+ apps in one area. 
+Would someone provide insights on this area?
+solution: the ideal recommendation is to have one repo per MuleSoft application/API. 
+But in few circumstances wehre there might be limit of number of licenses available for repos and number of apps 
+are in 100s you can adopt one repo with multiple folders where one folder represent one app. You will need to adopt 
+a slightly modified Ci-CD process for build and deploy in this case.
+
+11.  i have a use case to connect to azure file storage where i need to place csv file in file share location. 
+I have used Azure storage connector with stream to upload the file.
+Issue i am getting is the file is getting placed but with partial data.
+Anyone worked on AZURE STORAGE ?
+
+12. How to give insert query dynamically in bulk insert component ?
+The Use case is , we have to insert each file into particular table in database. And each file contains thousands of 
+records in csv form.
+solution:
+a. Parameterise your query like usually we do:
+INSERT INTO tableName VALUES (:id, :name);
+In your input, pass an array of objects with the parameters.
+[ { "id": 1, "name": "hello"}, { "id": 2, "name": "world" } ]
+b. If you wants to reusing the Bulk Insert component then
+You should have it in a utility sub-flow and can set the query and params like in the image below.
+And whenever you wants to bulk insert just set these variables and call this subflow.
+like vars.inputParams and #[vars.query]
+NOTE : For same database config.
+c. You can use a dynamic evaluate component before bulk insert which will fetch query dynamically and use 
+that payload as query in bulk insert component.
+=====================
+input
+[{ITEM=200000000, LOCATION=2, PROCESSTYPE=AVAILABLE_FOR_ORDER, MAXIMUMONHANDQUANTITY=1.1, EFFECTIVEDATETIME=2015-09-30, U_EFF=2015-09-30, DISCONTINUEDATETIME=9999-12-31, MESSAGEID=11, ACTIONCODE=INSERT, SAFETYTIME=12, CREATIONDATETIME=null}, {ITEM=200000001, LOCATION=2, PROCESSTYPE=AVAILABLE_FOR_ORDER, MAXIMUMONHANDQUANTITY=2.2, EFFECTIVEDATETIME=2015-09-30, U_EFF=2015-09-30, DISCONTINUEDATETIME=9999-12-31, MESSAGEID=222, ACTIONCODE=INSERT, SAFETYTIME=11, CREATIONDATETIME=null}] 
+soltuion:
+%dw 2.0
+input payload text/plain  
+var split = payload replace "=" with " : "
+output application/json  
+---
+read(split, "application/yaml")
+
+
+===========

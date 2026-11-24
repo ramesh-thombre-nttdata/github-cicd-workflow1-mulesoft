@@ -1,0 +1,19 @@
+Percipio:
+Querying SQL DBs: Learning SQL using Prompt Engineering:
+- A foreign key in one table references the primary key in another table, establishing a relationship between the entities represented by those two tables.
+- Relational databases also allow you to specify additional constraints on your data. You can say that columns should have unique values in a table,columns cannot be null, and so on.
+- Relational databases support transactions. A transaction is just one or more database operations that are treated as an atomic unit, an indivisible unit of work.
+- Transactions are executed in an all-or-nothing manner. Either all of the operations of a transaction will execute successfully or if there is any failure, the entire transaction will be rolled back. There will be no partial completion of operations in the transaction.
+- The use of transactions ensure consistency and reliability of data in multi-user environments where there are multiple users for the same database and in concurrent access environments when multiple users are accessing the same data at the same time.
+- Support for transactions in a relational database means that SQL supports ACID properties for transactions.
+- This is an acronym where A stands for atomicity, which ensures that a database transaction is treated as a single indivisible unit of work. All the operations within a transaction are either fully completed or fully rolled back if an error occurs.
+- Consistency ensures that a transaction always leaves adatabase in a consistent state. The database must follow a set of pre-defined rules and constraints, and any transaction that violates these rules will not be allowed to execute.
+- The I stands for isolation. Isolation ensures that transactions that execute concurrently do not interfere with each other. Each transaction runs in its own isolated environment. Each transaction should not be aware of the other transactions that exist in the same system until they are completed.
+- And finally, transactions exhibit durability.
+- Durability guarantees that once the transaction is successfully completed or committed, its changes are permanent and will survive any subsequent failures of the system.
+- Relational DB examples:
+- MySQL, PostgreSQL, MS SQL Server, Oracle, SQLite
+
+
+wget -r -A.html hr-policy-docs https://www.hrhelpboard.com/hr-policies.html
+=========
