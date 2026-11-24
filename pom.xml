@@ -3,9 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>23e266c6-fe6d-4e6c-b8d3-d42b6da1d764</groupId>
 	<artifactId>github-cicd-workflow1-mulesoft</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<packaging>mule-application</packaging>
-	
 	<name>github-cicd-workflow1-mulesoft</name>
 
 	<properties>
@@ -53,6 +52,17 @@
 					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version>
+				<configuration>
+					<compilerArgs>
+						<args>-parameters</args>
+					</compilerArgs>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -81,8 +91,20 @@
 			<version>1.2.0</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-file-connector</artifactId>
+			<version>1.5.2</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.module</groupId>
+			<artifactId>mule-java-module</artifactId>
+			<version>1.2.13</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
 	</dependencies>
-		<distributionManagement>
+	<distributionManagement>
 		<repository>
 			<id>connected-app-credentials</id>
 			<name>Corporate Repository</name>

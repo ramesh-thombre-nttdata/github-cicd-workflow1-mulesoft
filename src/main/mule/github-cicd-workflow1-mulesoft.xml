@@ -10,7 +10,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
 	<flow name="list-functions-flow" doc:id="4f7ba956-2629-4e20-933b-709467400e41" >
-		<http:listener doc:name="Listener" doc:id="72585af4-3102-4db0-8909-3579bc7a07a1" config-ref="HTTP_Listener_config" path="/test"/>
+		<http:listener doc:name="Listener" doc:id="72585af4-3102-4db0-8909-3579bc7a07a1" path="/test" config-ref="HTTP_Listener_config"/>
 		<ee:transform doc:name="Transform Message" doc:id="033e4ae3-7fb9-4bb2-afaa-dba33332ef5e" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
